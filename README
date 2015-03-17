@@ -1,5 +1,1980 @@
 Google's HTML5 port of Bytonic Software's Java port of Id Software's Quake II
 
 To install and run: http://http://code.google.com/p/quake2-gwt-port/wiki/BuildingAndRunning
-Eclipse setup: http://http://code.google.com/p/quake2-gwt-port/wiki/EclipseSetup
 
+BuildingAndRunning  
+Building and Running the Code 
+Featured Updated Oct 18, 2010 by joelgwebber
+Caveat: We've been building entirely on Mac & Linux boxes, so YMMV on Windows. It shouldn't be too much work to get it going, but we haven't tried yet.
+
+4 easy steps:
+
+Make sure Ogg Vorbis, Java and Lame are installed. Java is needed to compile the code and to convert the images. Ogg and Lame are needed to convert the Quake II sound resources for the Web.
+On Linux, run sudo apt-get install vorbis-tools openjdk-6-jdk and try sudo apt-get install lame. If installing Lame via apt does not work, install it from the original source.
+On a Mac, install MacPorts and then run sudo port install vorbis-tools and sudo port install lame.
+64.brian suggests to use HomeBrew instead of MacPorts because it requires less resources.
+Check out the code and change into the project directory (cd quake2-gwt-port).
+ant run (will install the original Quake II demo resources, build the client and server code, then run the server).
+Navigate to: http://localhost:8080/GwtQuake.html (or whatever port you specified to the server).
+If you run into an issue on a particular platform, the comments below may contain some help.
+
+Comment by Alistair...@gmail.com, Apr 1, 2010
+Ubuntu Karmic - Step 4: "Unable to access jarfile maven-build/installer/target/gquake-installer-1.0-SNAPSHOT.jar"
+
+Comment by sgraham, Apr 1, 2010
+@AlistairGMacDonald: doing sudo apt-get install openjdk-6-jdk (vs. I just had JRE installed on the machine) fixed something very close to that for me.
+
+Comment by redch...@gmail.com, Apr 1, 2010
+On MacOS X, I ran into the following in step 3:
+
+The system is out of resources. Consult the following stack trace for details. java.lang.OutOfMemoryError?: Java heap space
+
+Increasing the heap maven uses let me passed that: export MAVEN_OPTS=-Xmx512m
+
+Great job guys!
+
+Comment by dhol...@gmail.com, Apr 1, 2010
+Compiling in CygWin? under Win7 64bit. Everything goes fine until the installer JAR is run in step 4:
+
+$ java -jar maven-build/installer/target/gquake-installer-1.0-SNAPSHOT.jar raw/baseq2 already exists; no need to download Opened packfile C:\games\quake2-gwt-port\raw\baseq2\pak0.pak (1106 files)
+
+pics/p_megahealth.pcx java.io.FileNotFoundException?: C:\Games\quake2-gwt-port\war\baseq2\pics\p_megahe alth.png (The system cannot find the path specified)
+
+at java.io.RandomAccessFile?.open(Native Method) at java.io.RandomAccessFile?.<init>(Unknown Source) at javax.imageio.stream.FileImageOutputStream?.<init>(Unknown Source) at com.sun.imageio.spi.FileImageOutputStreamSpi?.createOutputStreamInstan
+ce(Unknown Source)
+at javax.imageio.ImageIO.createImageOutputStream(Unknown Source) at javax.imageio.ImageIO.write(Unknown Source) at jake2.tools.PCXConverter.convert(PCXConverter.java:37) at jake2.tools.Unpak.convertFile(Unpak.java:137) at jake2.tools.Unpak.unpak(Unpak.java:241) at jake2.tools.Unpak.convertDir(Unpak.java:104) at jake2.tools.Unpak.main(Unpak.java:92) at jake2.tools.Installer.main(Installer.java:29)
+Exception in thread "main" java.lang.NullPointerException?
+at javax.imageio.ImageIO.write(Unknown Source) at jake2.tools.PCXConverter.convert(PCXConverter.java:37) at jake2.tools.Unpak.convertFile(Unpak.java:137) at jake2.tools.Unpak.unpak(Unpak.java:241) at jake2.tools.Unpak.convertDir(Unpak.java:104) at jake2.tools.Unpak.main(Unpak.java:92) at jake2.tools.Installer.main(Installer.java:29)
+Comment by fer...@gmail.com, Apr 1, 2010
+Sound isn't working for me. I built it on Ubuntu 9.04. Ogg vorbis and LAME were installed using "sudo apt-get install vorbis-tools" and "sudo apt-get install lame".
+
+I'm viewing the game in the latest build of Chromium (5.0.368.0 - 43385)
+
+Any idea what the problem could be?
+
+Comment by mrdomino, Apr 1, 2010
+In Ubuntu 10.04, ./install-resources breaks: /bin/sh doesn't know what pushd means. Doing s/sh/bash/ in the hashbang line fixes it.
+
+Comment by Peter.WM...@gmail.com, Apr 1, 2010
+I was able to get through steps 1-5 just fine. When visiting http://localhost:8080/GwtQuake.html, I get a black screen and noticed the following error in the inspector console: com.google.gwt.core.client.JavaScriptException?: (TypeError?): undefined is not a function
+
+stack: TypeError?: undefined is not a function
+at CALL_NON_FUNCTION_AS_CONSTRUCTOR (native) at wSd ...
+This message is preceded with:
+
+Quake2 Initialized
+static buffer created; id: 0 remaining: 8
+
+Environment: - Chromium 5.0.367.0 (Developer Build 43319) - Ubuntu 10.04 x64
+
+Any ideas?
+
+Comment by imnichol...@gmail.com, Apr 1, 2010
+Seconding AlistairGMacDonald's problem. Installing the jdk didn't resolve it.
+
+Comment by redch...@gmail.com, Apr 1, 2010
+@feross on MacOS X, I had no sound with Chromium but it worked with webkit.
+
+Comment by imnichol...@gmail.com, Apr 1, 2010
+Nevermind, figured it out. I'm running Ubuntu, which uses /bin/dash as the default shell. Change it so that "/bin/sh" points to "/bin/bash", and it will work like a charm
+
+Comment by imnichol...@gmail.com, Apr 1, 2010
+Now I'm getting "Unable to access jarfile maven-build/server/target/gwtquake/gquake-server-1.0-SNAPSHOT.jar" in step 5
+
+Comment by imnichol...@gmail.com, Apr 1, 2010
+Alright weird, I just had to go back and re-run "./build-dedicated-server", and then run "./install-resources" for it to work.
+
+Comment by ianpatri...@gmail.com, Apr 1, 2010
+Guys, I want to check this out but could I ask for a favor? Please make the installation kit easy to understand for non-developers and more user friendly. Something like a install.exe would suffice. All these instructions sounds gibberish to me (except the words Mac, Linux and Windows.) lol ^^
+
+Comment by Leogz6...@gmail.com, Apr 1, 2010
+Sweet!!!!!
+
+Comment by jtchange22, Apr 1, 2010
+Here's what I got in Windows 7 built in cygwin after some fiddling. Screenshot
+
+Unpacking must've failed, so I unpacked manually and converted some pcx files to png and this is what I got.
+
+Comment by rsh...@gmail.com, Apr 1, 2010
+@imnichol5253 Same here. It seems like the first time the script is executed it doesn't actually compile anything, just seemed to download a lot of files.
+
+Comment by driland...@gmail.com, Apr 1, 2010
+Oh My God! People are still falling for this April Fool Prank up till today.
+
+Comment by 64.br...@gmail.com, Apr 1, 2010
+Instead of MacPorts??, which is horrible bloated and of itself installs a bunch of unneeded duplicate components already present in the OS, use Homebrew.
+
+It takes all of 10 seconds to install, and then a short bit to install vorbis-tools and lame.
+
+http://github.com/mxcl/homebrew/tree/
+
+If you want to just run everything from the commandline:
+
+sudo chown -R $USER /usr/local
+
+curl -Lsf http://github.com/mxcl/homebrew/tarball/master | tar xvz -C/usr/local --strip 1
+
+brew install vorbis-tools
+
+brew install lame
+
+Comment by firest...@gmail.com, Apr 1, 2010
+Wow!!!!! this is a wonderful great project!! @3@ I love Quake2~ XD
+
+Comment by chaddor...@gmail.com, Apr 1, 2010
+When running the ./build-dedicated-server:
+
+Exception in thread "main" java.lang.NoClassDefFoundError?: org/codehaus/classworlds/Launcher
+
+Anyone else run into this? Any advice?
+
+Comment by still...@gmail.com, Apr 1, 2010
+@feross same problem here, no sound on chromium on ubuntu karmic
+
+This is friggin awesome though :) 40fps in the browser... wow
+
+Comment by Iori.Nis...@gmail.com, Apr 1, 2010
+@AlistairGMacDonald
+
+doing
+
+%sudo ./build-dedicated-server
+
+Comment by stone...@gmail.com, Apr 2, 2010
+for Mac OSX users - confirmed working with following install:
+
+installed vorbis-tools and lame using fink had to set heap size to (export MAVEN_OPTS=-Xmx512m) followed rest of commands as followed:
+
+had a black screen at this point
+
+edit GwtQuake?.html in the war directory to point to 'gwtquake.nocache.js' instead of 'gwtquake/gwtquake.nocache.js'
+
+works with safari and chrome builds listed in browser compatibility page
+
+good luck'
+
+Comment by danbrick...@gmail.com, Apr 2, 2010
+(after some considerable searching around to check this wasn't an april fool's joke ... :)
+
+./build-dedicated-server INFO? Scanning for projects... INFO? Reactor build order: INFO? GwtQuake? INFO? GwtQuake? Client INFO? GwtQuake? Dedicated WebSocket? Server INFO? GwtQuake? Demo Installer INFO? ------------------------------------------------------------------------ INFO? Building GwtQuake? INFO? task-segment: [clean, install] INFO? ------------------------------------------------------------------------ Downloading: http://gwt-maven.googlecode.com/svn/trunk/mavenrepo//org/apache/maven/maven/2.0.2/maven-2.0.2.pom INFO? Unable to find resource 'org.apache.maven:maven:pom:2.0.2' in repository gwt-maven (http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/) Downloading: http://snapshots.repository.codehaus.org//org/apache/maven/maven/2.0.2/maven-2.0.2.pom INFO? Unable to find resource 'org.apache.maven:maven:pom:2.0.2' in repository codehaus-snapshots (http://snapshots.repository.codehaus.org/) Downloading: http://gwt-maven.googlecode.com/svn/trunk/mavenrepo//org/apache/maven/maven/2.0.2/maven-2.0.2.pom INFO? Unable to find resource 'org.apache.maven:maven:pom:2.0.2' in repository gwt-maven (http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/) Downloading: http://repo1.maven.org/maven2/org/apache/maven/maven/2.0.2/maven-2.0.2.pom
+
+..and lots more Maven errors in same vein. This after Port installing vorbis-tools and lame with no problems.
+
+Comment by victor.r...@gmail.com, Apr 2, 2010
+Hello guys. Get these errors on stage 3 when executing build-dedicated-server:
+
+line 2: cd: maven-build: No such file or directory
+
+line 3: ./maven/bin/mvn: No such file or directory
+
+In on mac, and would appreciate walkthrough:)
+
+Comment by KrocCamen, Apr 2, 2010
+Managed to compile using instructions from: 64.brian (use brew for easy install of ogg). If you don’t have hg to checkout the source code, you can then use brew to install it:
+
+brew install pip && pip install mercurial
+
+Increase maven’s memory "export MAVEN_OPTS=-Xmx512m" (comment by redchris)
+
+Everything compiled, but when I run it in WebKit? Nightly, I get a black screen and the console text overprints itself (no framebuffer?). Can anybody help with this please! I need to do a writeup for osnews.
+
+Comment by Izeas...@gmail.com, Apr 2, 2010
+How would you get something like this working on Chrome OS? 'Cause this definitely seems to be another case of things pointing toward "the Web as operating system."
+
+Comment by giulio.p...@gmail.com, Apr 2, 2010
+Hi guys. I have MAC OSX (Leopard) and i have a problem in step 3: when running ./build-dedicated-server i see INFO? Scanning for projects... INFO? Reactor build order: INFO? GwtQuake? INFO? GwtQuake? Client INFO? GwtQuake? Dedicated WebSocket? Server INFO? GwtQuake? Demo Installer INFO? ------------------------------------------------------------------------ INFO? Building GwtQuake? INFO? task-segment: [clean, install] INFO? ------------------------------------------------------------------------ Downloading: http://gwt-maven.googlecode.com/svn/trunk/mavenrepo//org/apache/maven/plugins/maven-clean-plugin/2.2/maven-clean-plugin-2.2.pom INFO? Unable to find resource 'org.apache.maven.plugins:maven-clean-plugin:pom:2.2' in repository gwt-maven (http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/) Downloading: http://snapshots.repository.codehaus.org//org/apache/maven/plugins/maven-clean-plugin/2.2/maven-clean-plugin-2.2.pom INFO? Unable to find resource 'org.apache.maven.plugins:maven-clean-plugin:pom:2.2' in repository codehaus-snapshots (http://snapshots.repository.codehaus.org/) Downloading: http://repo1.maven.org/maven2/org/apache/maven/plugins/maven-clean-plugin/2.2/maven-clean-plugin-2.2.pom Downloading: http://gwt-maven.googlecode.com/svn/trunk/mavenrepo//org/apache/maven/plugins/maven-plugins/10/maven-plugins-10.pom INFO? Unable to find resource 'org.apache.maven.plugins:maven-plugins:pom:10' in repository gwt-maven (http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/) Downloading: http://snapshots.repository.codehaus.org//org/apache/maven/plugins/maven-plugins/10/maven-plugins-10.pom INFO? Unable to find resource 'org.apache.maven.plugins:maven-plugins:pom:10' in repository codehaus-snapshots (http://snapshots.repository.codehaus.org/) Downloading: http://repo1.maven.org/maven2/org/apache/maven/plugins/maven-plugins/10/maven-plugins-10.pom
+
+what i have to do?
+
+Comment by mwillis...@googlemail.com, Apr 2, 2010
+I keep getting a compile error on ubuntu karmic 9.10:
+
+WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent! INFO? skip non existing resourceDirectory /home/mark/Games/quake2-gwt-port/maven-build/server/src/main/resources INFO? [compiler:compile {execution: default-compile}] INFO? Compiling 263 source files to /home/mark/Games/quake2-gwt-port/maven-build/server/target/classes INFO? ------------------------------------------------------------------------ ERROR? BUILD ERROR INFO? ------------------------------------------------------------------------ INFO? Fatal error compiling
+
+Embedded error: Error while executing the external compiler. java.io.IOException: error=2, No such file or directory INFO? ------------------------------------------------------------------------ INFO? For more information, run Maven with the -e switch INFO? ------------------------------------------------------------------------ INFO? Total time: 1 minute 15 seconds INFO? Finished at: Fri Apr 02 11:52:59 BST 2010 INFO? Final Memory: 47M/360M INFO? ------------------------------------------------------------------------
+
+Any Ideas?
+
+Comment by list.jon...@gmail.com, Apr 2, 2010
+lots of various errors on the main build, but it worked all right, a little jumpy (as I guess I would expect). No sound. Over all, neat project! I'm going to see if I can access it from my wife's computer on the LAN later, maybe we'll setup a server and have a death-match.
+
+Comment by cop...@gmail.com, Apr 2, 2010
+Compiling in cygwin under window XP. I met following error message at ./install-resources.
+
+Opened packfile d:\project\quake2_gwt\copark-clone\raw\baseq2\pak0.pak (1106 files) 
+pics/p_megahealth.pcx 
+java.io.FileNotFoundException?: D:\project\quake2_gwt\copark-clone\war\baseq2\pics\p_megahealth.png (The system cannot find the path specified)
+at java.io.RandomAccessFile?.open(Native Method) 
+...
+at jake2.tools.Unpak.main(Unpak.java:92) 
+at jake2.tools.Installer.main(Installer.java:29) 
+Exception in thread "main" java.lang.IllegalArgumentException?: output == null!
+at javax.imageio.ImageIO.write(ImageIO.java:1435) 
+...
+at jake2.tools.Unpak.main(Unpak.java:92) at jake2.tools.Installer.main(Installer.java:29) 
+Any ideas?
+
+Comment by furftas...@gmail.com, Apr 2, 2010
+Tried "export MAVEN_OPTS=-Xmx512m" on OS X 10.6.3, but still running out of resources at step #3. Even tried "export MAVEN_OPTS=-Xmx2048m". Still not enough. Thoughts?
+
+INFO? ------------------------------------------------------------------------ ERROR? BUILD FAILURE INFO? ------------------------------------------------------------------------ INFO? Compilation failure Failure executing javac, but could not parse the error:
+
+The system is out of resources. Consult the following stack trace for details. java.lang.OutOfMemoryError?: Java heap space
+
+at java.nio.CharBuffer?.wrap(CharBuffer?.java:350) at java.nio.CharBuffer?.wrap(CharBuffer?.java:373) at java.lang.StringCoding?$StringDecoder?.decode(StringCoding?.java:138) at java.lang.StringCoding?.decode(StringCoding?.java:173) at java.lang.String.<init>(String.java:443) at com.sun.tools.javac.zip.ZipFileIndex?$ZipDirectory?.readEntry(ZipFileIndex?.java:805) at com.sun.tools.javac.zip.ZipFileIndex?$ZipDirectory?.buildIndex(ZipFileIndex?.java:720) at com.sun.tools.javac.zip.ZipFileIndex?$ZipDirectory?.access$000(ZipFileIndex?.java:652) at com.sun.tools.javac.zip.ZipFileIndex?.checkIndex(ZipFileIndex?.java:261) at com.sun.tools.javac.zip.ZipFileIndex?.<init>(ZipFileIndex?.java:209) at com.sun.tools.javac.zip.ZipFileIndex?.getZipFileIndex(ZipFileIndex?.java:115) at com.sun.tools.javac.util.DefaultFileManager?.openArchive(DefaultFileManager?.java:636) at com.sun.tools.javac.util.DefaultFileManager?.listDirectory(DefaultFileManager?.java:325) at com.sun.tools.javac.util.DefaultFileManager?.list(DefaultFileManager?.java:872) at com.sun.tools.javac.jvm.ClassReader?.fillIn(ClassReader?.java:2123) at com.sun.tools.javac.jvm.ClassReader?.complete(ClassReader?.java:1781) at com.sun.tools.javac.code.Symbol.complete(Symbol.java:386) at com.sun.tools.javac.comp.Enter.visitTopLevel(Enter.java:272) at com.sun.tools.javac.tree.JCTree$JCCompilationUnit.accept(JCTree.java:446) at com.sun.tools.javac.comp.Enter.classEnter(Enter.java:236) at com.sun.tools.javac.comp.Enter.classEnter(Enter.java:250) at com.sun.tools.javac.comp.Enter.complete(Enter.java:444) at com.sun.tools.javac.comp.Enter.main(Enter.java:429) at com.sun.tools.javac.main.JavaCompiler?.enterTrees(JavaCompiler?.java:819) at com.sun.tools.javac.main.JavaCompiler?.compile(JavaCompiler?.java:727) at com.sun.tools.javac.main.Main.compile(Main.java:353) at com.sun.tools.javac.main.Main.compile(Main.java:279) at com.sun.tools.javac.main.Main.compile(Main.java:270) at com.sun.tools.javac.Main.compile(Main.java:87) at sun.reflect.NativeMethodAccessorImpl?.invoke0(Native Method) at sun.reflect.NativeMethodAccessorImpl?.invoke(NativeMethodAccessorImpl?.java:39) at sun.reflect.DelegatingMethodAccessorImpl?.invoke(DelegatingMethodAccessorImpl?.java:25)
+Comment by aecob...@googlemail.com, Apr 2, 2010
+I've got it running on Snow Leopard using steps 1-6. just had to reinstall MacPorts??. No problems apart from the lack of sound as @freross says. i'm only getting 13 odd frames a second on my macbook though!
+
+Comment by david.de...@gmail.com, Apr 2, 2010
+@mwillis.fb
+
+apt-get install sun-java6-jdk
+
+Comment by julian.a...@gmail.com, Apr 2, 2010
+Every time I try to run ./build-dedicated-server, it fails with:
+
+'INFO? ------------------------------------------------------------------------ ERROR? BUILD ERROR INFO? ------------------------------------------------------------------------ INFO? Command [[ /bin/sh -c /usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/bin/java -Xmx512m -classpath "/home/user/quake2-gwt-port/maven-build/client/../../src":"/home/user/quake2-gwt-port/maven-build/client/src/main/resources":"/home/user/quake2-gwt-port/maven-build/client/target/classes":"/home/user/.m2/repository/com/google/gwt/gwt-servlet/2.0.0/gwt-servlet-2.0.0.jar":"/home/user/.m2/repository/com/google/gwt/gwt-user/2.0.0/gwt-user-2.0.0.jar":"/home/user/.m2/repository/com/google/gwt/gwt-dev/2.0.0/gwt-dev-2.0.0.jar" com.google.gwt.dev.Compiler -gen "/home/user/quake2-gwt-port/maven-build/client/target/.generated" -logLevel INFO -style OBF -war "/home/user/quake2-gwt-port/maven-build/client/target/gquake-client-1.0-SNAPSHOT" -localWorkers 8 jake2.GwtQuake? ]] failed with status 134'
+
+Does someone know how to avoid this error?
+
+Comment by b...@getdown.org, Apr 2, 2010
+It builds and runs but I can't make multiplayer work on any computer other than the one the server is on.
+
+I added the <script>var serverAddress = "XXXX";</script> to GwtQuake?.html but it doesn't seem to help. Neither does typing connect <IP> from the command line.
+
+Any other tricks I should know about?
+
+Comment by kasper.k...@gmail.com, Apr 2, 2010
+it runs pretty fucking good! ~20 fps, no sound tho :(
+
+Comment by mwillis...@googlemail.com, Apr 2, 2010
+for karmic: I finally got it too build after running this:
+
+sudo aptitude install javacc sun-java6-jdk gcj openjdk-6-jdk
+
+for better error messages add -e option to ./build
+
+Comment by vivacar...@gmail.com, Apr 2, 2010
+MAKE IT RUN ON APP ENGINE NOW PLEASE ! sorry, that was impolite. its just so plausibl. It could be done and well
+
+Comment by richard....@gmail.com, Apr 2, 2010
+I also get the same errors as giulio.prandini, but I am using ubuntu jaunty.
+
+Comment by rob.eber...@gmail.com, Apr 2, 2010
+for OSX people having "The system is out of resources" problems, this solved it for me:
+
+export MAVEN_OPTS=-Xms512m export MAVEN_OPTS=-Xmx512m
+
+Comment by chris.c...@gmail.com, Apr 2, 2010
+WebGraphicsContext3DDefaultImpl: OpenGL 2.0 not supported
+
+Any ideas?
+
+Comment by chaddor...@gmail.com, Apr 2, 2010
+@Iori.Nishizawa sudo did it for me. Thanks! Running great in Webkit at > 13fps. No sound, but possibly faster (?) in Chromium.
+
+Comment by j.to.the...@gmail.com, Apr 2, 2010
+Installs and runs as outlined for me (on an early 2008 mac pro). In chromium I get no sound though, and in Webkit everything except the background (boxes, players, my hand/gun, items ) flickers incessantly and annoyingly. Still pretty exciting.
+
+Comment by jabba.l...@gmail.com, Apr 2, 2010
+I could compile it but when I visit the localhost address all I get is a black screen. Any idea?
+
+Comment by sigrist....@gmail.com, Apr 2, 2010
+Can compile with Fedora. Wish I could make it listen to a different interface and port though.
+
+Comment by ishcabit...@gmail.com, Apr 2, 2010
+up and running on a macbook at around 7fps - going to try on my hackintosh tonight. pretty awesome all the way around, tho.
+
+Comment by jamescr...@gmail.com, Apr 2, 2010
+YMMV: Your Mileage May Vary
+
+Comment by almafuerte@gmail.com, Apr 2, 2010
+YMMV: Your microsoft machine (is) vomitive.
+
+AKA: Don't use Windows.
+
+Comment by elmonkeylp, Apr 2, 2010
+happy April Fools Day!
+
+Comment by harrison...@gmail.com, Apr 2, 2010
+So... if I want to use Windows, I should use CygWin? to build it? I don't have a Linux or Mac box handy... so yeah.
+
+Comment by dev.naw...@gmail.com, Apr 2, 2010
+Hi,
+
+I run it on WinXP.  Great and funny.
+
+Comment by Poulse...@gmail.com, Apr 2, 2010
+NOOOOOOOO......I just get a black screen, like jabba.laci, please help me!!
+
+Comment by dan.j.f...@gmail.com, Apr 2, 2010
+I was able to get the server to build and run w/o any issues or errors however I'm having a hard time getting my browser to connect to http://localhost:8080/GwtQuake.html. I'm on Debian Squeeze. Using the Debian version of Chrome (5.0.356.2 dev) and starting it with the --enable-webgl I get the "Aw, Snap!" error page. On the console I get this error:
+
+No protocol specified GraphicsContext3D: error opening X display
+
+I also tried to download chrome directly and when running that it won't connect at all.
+
+Comment by jlaur...@gmail.com, Apr 2, 2010
+export MAVEN_OPTS=-mx1024M worked for me in 10.6.2.
+
+Comment by asteed@siber.com, Apr 2, 2010
+i've got the black screen too =\
+
+Comment by wendelbs...@gmail.com, Apr 2, 2010
+When I try to run I got the following message:
+
+Do I have to download the quake2 demo and copy the resources to the quake2-gwt-port?
+
+Quake2 Initialized
+java.io.FileNotFoundException?: maps/demo1.bsp
+
+Comment by megazzt, Apr 2, 2010
+If you get a black screen make sure you are launching Chrome with --enable-webgl otherwise Quake 2 will be unable to use 3d graphics
+
+Comment by bassica...@gmail.com, Apr 2, 2010
+Anyway to lock the mouse when playing in Chromium? Also no sound here on Ubuntu 9.10 Karmic
+
+Comment by megazzt, Apr 2, 2010
+Oh it seems on Chrome Dev, most textures are not rendered, leading to black screen. Wait for a new Dev channel or try trunk, maybe.
+
+Comment by jeremy.s...@gmail.com, Apr 2, 2010
+I was getting a blank screen in Webkit. The Activity monitor said the nocache.js file wasn't found, so I looked around, found the file and copy-pasted it into the proper location.
+
+Now Quake II loads, but the moment it shows the menu it refreshes the page or reloads or something.
+
+Comment by kubo...@gmail.com, Apr 2, 2010
+If you are getting black screen in folder quake2-gwt-port run command:
+
+cp -R maven-build/server/target/gwtquake/war/gwtquake ./war/
+
+Comment by megazzt, Apr 2, 2010
+Hmm I tried the nightly here: http://build.chromium.org/buildbot/snapshots/chromium-rel-xp/43525/
+
+And still no go. No textures like before, except now sound is broken too.
+
+Comment by megazzt, Apr 2, 2010
+Fixed it, forgot to turn off the sandbox :facepalm:
+
+Comment by redkr...@gmail.com, Apr 2, 2010
+mwillis.fb, I was getting the same error (Embedded error: Error while executing the external compiler. java.io.IOException: error=2, No such file or directory). It's because you don't have anything to satisfy "javac". Installing openjdk-6-jdk will correct your issue.
+
+Comment by per.fra...@gmail.com, Apr 2, 2010
+if you have problems with
+
+pics/p_megahealth.pcx java.io.FileNotFoundException??: C:\Games\quake2-gwt-port\war\baseq2\pics\p_megahe alth.png (The system cannot find the path specified)
+
+download PakExplorer? at http://francis.dupont.free.fr/coindev/pakexp.zip and extract all the files from .\quake2-gwt-port\raw\baseq2\pak0.pak into quake2-gwt-port\raw\baseq2. Then copy the baseq2 folder into the quake2-gwt-port\war
+
+Comment by everest0...@gmail.com, Apr 2, 2010
+i don't know what any of the stuff you guys are sayin i just want to play it :(
+
+Comment by agentc...@gmail.com, Apr 2, 2010
+I've figured out how to fix the gamma issue. Just run "xgamma -gamma 1.8" Then launch your browser to the game. I am having some major sound issues though. I am running Slackware 64. When Chrome is ran i get these issues: http://pastebin.com/aPBWYT4K
+
+I made a few more notes of things I found out as well and put them on my blog. http://learnix.net/html5-quake2-awesome-plus-a-way-to-fix-the-gamma-problem/
+
+Comment by troyjr...@gmail.com, Apr 2, 2010
+Really funny jake.. I mean joke.. Happy april fools!
+
+http://internetgames.about.com/b/2005/11/28/quake-2-in-java.htm
+
+Comment by adren...@gmail.com, Apr 2, 2010
+Ok, the April Fool's Day folks either can't successfully compile it, or aren't trying to. It works really, really well. On Ubuntu 10.04 Beta, I had to install (sudo apt-get install maven2) Maven, and then the instructions worked fine, without sound, but working fine. BTW, I was able to get successful compile messages without Maven installed, but it resulted in the "black screen" issue that some other people seem to be having.
+
+Amazing job, guys. This has blown some of my co-workers minds, considering I've got it running the server in an Ubuntu virtual machine and it works over the WWW without any fuss at all. I was happy it ran on the LAN, but I was very surprised at how well it worked over the Internet at large.
+
+Comment by bsd...@gmail.com, Apr 2, 2010
+Don't give people command lines to copy and paste, just tell them what to install. They need to think for themselves and learn how to use their computer. If people just copy and paste commands from a web site, they could easily be tricked into damaging their computer.
+
+Comment by james.sc...@gmail.com, Apr 2, 2010
+I was able to get it running in Windows 7 (64-bit). However, images on the menu were all grayscale and the map and models on game load were wireframe. Sound worked, though.
+
+Comment by priyajeet, Apr 2, 2010
+Not getting any sound in google chrome :(
+
+Comment by simon.d...@gmail.com, Apr 2, 2010
+im getting a lot of unable to find resource when trying this...
+
+Comment by chusb...@gmail.com, Apr 2, 2010
+If you see
+
+pics/p_megahealth.pcx java.io.FileNotFoundException??: C:\Games\quake2-gwt-port\war\baseq2 \pics\p_megahe alth.png (The system cannot find the path specified)
+on Windows. This is a problem in the src\jake2\tools\Unpak.java class where it assumes Windows uses a "/" for files instead of "\". Here is a quick change to fix it to get it working on Windows
+
+... private static void createPath(String path) {
+int index = path.lastIndexOf('\\');
+...
+Comment by vrking.9...@gmail.com, Apr 2, 2010
+Anything else are all OK, but I get ERROR on the step "Building GwtQuake? Dedicated WebSocket? Server": HOW TO FIX IT??????
+
+INFO? ------------------------------------------------------------------------ INFO? Building GwtQuake? Dedicated WebSocket? Server INFO? task-segment: [clean, install] INFO? ------------------------------------------------------------------------ INFO? [clean:clean {execution: default-clean}] INFO? Deleting directory /root/quake2-gwt-port/maven-build/server/target INFO? [resources:copy-resources {execution: default}] WARNING? Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent! INFO? Copying 6 resources INFO? [resources:resources {execution: default-resources}] WARNING? Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent! INFO? skip non existing resourceDirectory /root/quake2-gwt-port/maven-build/server/src/main/resources INFO? [compiler:compile {execution: default-compile}] INFO? Compiling 263 source files to /root/quake2-gwt-port/maven-build/server/target/classes INFO? ------------------------------------------------------------------------ ERROR? BUILD ERROR INFO? ------------------------------------------------------------------------ INFO? Fatal error compiling
+
+Embedded error: Error while executing the external compiler. java.io.IOException: error=2, No such file or directory INFO? ------------------------------------------------------------------------ INFO? For more information, run Maven with the -e switch INFO? ------------------------------------------------------------------------ INFO? Total time: 2 minutes 45 seconds INFO? Finished at: Sat Apr 03 10:22:33 CST 2010 INFO? Final Memory: 24M/44M INFO? ------------------------------------------------------------------------ [root@localhost quake2-gwt-port]#
+
+I run RHEL4 on 1G RAM.
+
+Comment by vrking.9...@gmail.com, Apr 2, 2010
+When I using the -e switch to trace the ERROR, I get this: INFO? ------------------------------------------------------------------------ INFO? Building GwtQuake? Dedicated WebSocket? Server INFO? task-segment: [clean, install] INFO? ------------------------------------------------------------------------ INFO? [clean:clean {execution: default-clean}] INFO? Deleting directory /root/quake2-gwt-port/maven-build/server/target INFO? [resources:copy-resources {execution: default}] WARNING? Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent! INFO? Copying 6 resources INFO? [resources:resources {execution: default-resources}] WARNING? Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent! INFO? skip non existing resourceDirectory /root/quake2-gwt-port/maven-build/server/src/main/resources INFO? [compiler:compile {execution: default-compile}] INFO? Compiling 263 source files to /root/quake2-gwt-port/maven-build/server/target/classes INFO? ------------------------------------------------------------------------ ERROR? BUILD ERROR INFO? ------------------------------------------------------------------------ INFO? Fatal error compiling
+
+Embedded error: Error while executing the external compiler. java.io.IOException: error=2, No such file or directory INFO? ------------------------------------------------------------------------ INFO? Trace org.apache.maven.lifecycle.LifecycleExecutionException?: Fatal error compiling
+
+at org.apache.maven.lifecycle.DefaultLifecycleExecutor?.executeGoals(DefaultLifecycleExecutor?.java:719) at org.apache.maven.lifecycle.DefaultLifecycleExecutor?.executeGoalWithLifecycle(DefaultLifecycleExecutor?.java:556) at org.apache.maven.lifecycle.DefaultLifecycleExecutor?.executeGoal(DefaultLifecycleExecutor?.java:535) at org.apache.maven.lifecycle.DefaultLifecycleExecutor?.executeGoalAndHandleFailures(DefaultLifecycleExecutor?.java:387) at org.apache.maven.lifecycle.DefaultLifecycleExecutor?.executeTaskSegments(DefaultLifecycleExecutor?.java:348) at org.apache.maven.lifecycle.DefaultLifecycleExecutor?.execute(DefaultLifecycleExecutor?.java:180) at org.apache.maven.DefaultMaven?.doExecute(DefaultMaven?.java:328) at org.apache.maven.DefaultMaven?.execute(DefaultMaven?.java:138) at org.apache.maven.cli.MavenCli?.main(MavenCli?.java:362) at org.apache.maven.cli.compat.CompatibleMain?.main(CompatibleMain?.java:60) at sun.reflect.NativeMethodAccessorImpl?.invoke0(Native Method) at sun.reflect.NativeMethodAccessorImpl?.invoke(NativeMethodAccessorImpl?.java:39) at sun.reflect.DelegatingMethodAccessorImpl?.invoke(DelegatingMethodAccessorImpl?.java:25) at java.lang.reflect.Method.invoke(Method.java:597) at org.codehaus.classworlds.Launcher.launchEnhanced(Launcher.java:315) at org.codehaus.classworlds.Launcher.launch(Launcher.java:255) at org.codehaus.classworlds.Launcher.mainWithExitCode(Launcher.java:430) at org.codehaus.classworlds.Launcher.main(Launcher.java:375)
+Caused by: org.apache.maven.plugin.MojoExecutionException?: Fatal error compiling
+at org.apache.maven.plugin.AbstractCompilerMojo?.execute(AbstractCompilerMojo?.java:498) at org.apache.maven.plugin.CompilerMojo?.execute(CompilerMojo?.java:114) at org.apache.maven.plugin.DefaultPluginManager?.executeMojo(DefaultPluginManager?.java:490) at org.apache.maven.lifecycle.DefaultLifecycleExecutor?.executeGoals(DefaultLifecycleExecutor?.java:694) ... 17 more
+Caused by: org.codehaus.plexus.compiler.CompilerException?: Error while executing the external compiler.
+at org.codehaus.plexus.compiler.javac.JavacCompiler?.compileOutOfProcess(JavacCompiler?.java:343) at org.codehaus.plexus.compiler.javac.JavacCompiler?.compile(JavacCompiler?.java:137) at org.apache.maven.plugin.AbstractCompilerMojo?.execute(AbstractCompilerMojo?.java:493) ... 20 more
+Caused by: org.codehaus.plexus.util.cli.CommandLineException?: Error while executing process.
+at org.codehaus.plexus.util.cli.Commandline.execute(Commandline.java:679) at org.codehaus.plexus.util.cli.CommandLineUtils?.executeCommandLine(CommandLineUtils?.java:69) at org.codehaus.plexus.util.cli.CommandLineUtils?.executeCommandLine(CommandLineUtils?.java:56) at org.codehaus.plexus.compiler.javac.JavacCompiler?.compileOutOfProcess(JavacCompiler?.java:337) ... 22 more
+Caused by: java.io.IOException: Cannot run program "javac" (in directory "/root/quake2-gwt-port/maven-build/server"): java.io.IOException: error=2, No such file or directory
+at java.lang.ProcessBuilder?.start(ProcessBuilder?.java:459) at java.lang.Runtime.exec(Runtime.java:593) at org.codehaus.plexus.util.cli.Commandline.execute(Commandline.java:674) ... 25 more
+Caused by: java.io.IOException: java.io.IOException: error=2, No such file or directory
+at java.lang.UNIXProcess.<init>(UNIXProcess.java:148) at java.lang.ProcessImpl?.start(ProcessImpl?.java:65) at java.lang.ProcessBuilder?.start(ProcessBuilder?.java:452) ... 27 more
+INFO? ------------------------------------------------------------------------ INFO? Total time: 1 minute 59 seconds INFO? Finished at: Sat Apr 03 10:40:39 CST 2010 INFO? Final Memory: 24M/44M INFO? ------------------------------------------------------------------------ [root@localhost quake2-gwt-port]#
+Is it meaning that there is something missing? HOW TO FIX ????
+
+Comment by filmorep...@gmail.com, Apr 2, 2010
+Holy crap! Please open up bug tracking somewhere so this page is more than just random bug reports.
+
+Comment by Giovanni...@gmail.com, Apr 2, 2010
+It doesn't seem like setting the port works. Anytime I try to run it, it just defaults to 8080 #./run-dedicated-server 8801 still tries to use 8080.
+
+Comment by gil...@gmail.com, Apr 2, 2010
+I think is good you make a video for install on linux and Mac OS.
+
+Comment by pankaj86, Apr 2, 2010
+@filmorependrgn : People choose the easier path, there surely seems an Issues? tab in the site to report issues.
+
+Comment by james.sc...@gmail.com, Apr 2, 2010
+Got it working Windows 7 64bit. It only runs at between 4 and 13 fps for me.
+
+Comment by priyajeet, Apr 2, 2010
+"WebGL support in Chrome now runs inside the security sandbox. If you have been testing WebGL, please remove the --no-sandbox flag from your Chrome options. WebGL may be enabled via the --enable-webgl command line option."
+
+removing the no-sandbox flag breaks quake 2 and it ends up stuck. The menu even doesn't show.
+
+Comment by aprice2...@gmail.com, Apr 3, 2010
+Working very nicely on Lucid Lynx/Chromium, though without sound.
+
+Had to install JDK, set JAVA_HOME, do #!/bin/bash in files, fix ref to gwtquake.nocache.js in Gwtquake.html, plus copy it in. Framerate is very nice tho.
+
+Next -- sound.
+
+Andy
+
+Comment by Citizen...@gmail.com, Apr 3, 2010
+Not a dream, not an imaginary story...Works fine on my MBP 13" running Snow Leopard. FPS is only 24, but what do want for a small tech miracle?
+
+Great job!
+
+Comment by solstice.dhiver@gmail.com, Apr 3, 2010
+there is an error in the running instruction #5 ./run-dedicated-server always run on port 8080 whatever the port you specify on the command line !
+
+also, like suggested above, I modified war/GwtQuake?.html to use gwtquake.nocache.js but I still get a black screen.
+
+Comment by project member stefan.haustein, Apr 3, 2010
+@mrdomino fixed in hg
+
+@64.brian updated the instructions accordingly
+
+Comment by tomppeli12@gmail.com, Apr 3, 2010
+Doesn't work. Only black screen in Chrome. WebGL test runs just fine. Console gives following message: GraphicsContext3D: multisampling framebuffer was incomplete What am I supposed to do? Running Ubuntu 9.10, latest Chrome (I think at least, verison 5.0.370.0 (43578)) and Quake setup like told on this page. BTW: I had to install also sun-java6-jdk.
+
+Comment by jaka.jan...@gmail.com, Apr 3, 2010
+Works great for me on WebKit? nightly.
+
+On Debian Lenny you can install twolame instead of lame. On Mac OS X you can also use Fink to install vorbis-tools and lame.
+
+Comment by kacper...@gmail.com, Apr 3, 2010
+Ive come to two problems: #1. Download has really poor transfer for me(from the mirror selected by installer) and it times out i think cause it stops at some point. I have downloaded the file and i'd like to know if there's possibility to force the installer to use this file from my hdd.
+
+#2. I have installed chrome specialy for this and when i launch the server and try to open it in chrome with --enable-webgl --no-sandbox it says i dont have webGL - will it tell me that if i dont have everything installed yet?(see #1)
+
+I use ubuntu lucid i386.
+
+Comment by megazzt, Apr 3, 2010
+"removing the no-sandbox flag breaks quake 2 and it ends up stuck. The menu even doesn't show."
+
+Actually it keeps most textures from rendering. You can pop open the console and start a map to see that models have textures applied but not much else does.
+
+Comment by nick.lip...@gmail.com, Apr 3, 2010
+@kacperpl1
+
+I had the same problem, using --enable-webgl and --no-sandbox still brought up the 'no webgl' error page. I figured out you have to switch your chrome to the "developer" channel, and update it. Click here, run the installer, and restart chrome after updating: http://www.google.com/chrome/eula.html?extra=devchannel
+
+As for everyone saying you don't need --no-sandbox, I imagine there are other features this uses aside from webgl that won't run inside the sandbox.
+
+Comment by nick.lip...@gmail.com, Apr 3, 2010
+I meant to ask in my previous comment, has anyone gotten multiplayer to work? It would be nice if my friends and I could all visit one page and be in the same game.
+
+Comment by kacper...@gmail.com, Apr 3, 2010
+thanks @nick.lipple, but still it doesn't work for me
+
+Comment by Giovanni...@gmail.com, Apr 3, 2010
+For anyone having trouble getting the startup script to specify a port there is a fix here
+
+Comment by pustekuc...@gmail.com, Apr 3, 2010
+http://www.google.com/chrome/eula.html?extra=devchannel
+
+that helped me =) Thanks
+
+Comment by agentc...@gmail.com, Apr 3, 2010
+@nick.lipple Make sure you have all Chrome windows closed before trying to run it with those switches or it wont work. If you go to help and about, what version of chrome do you have? Maybe you need to update it?
+
+The only other thing could be is your cache. Either clear it or create a new user and try it with them.
+
+Comment by basadjg...@gmail.com, Apr 3, 2010
+1
+
+Comment by Shawn.So...@gmail.com, Apr 3, 2010
+My build on debian originally gave me all sorts of issues, as I was missing many specific packages, but went perfect with the following steps;
+
+starting from /usr/src/
+
+./apt-get install vorbis-tools hgsvn openjdk-6-jdk
+
+wget http://downloads.sourceforge.net/project/lame/lame/3.98.4/lame-3.98.4.tar.gz?use_mirror=voxel
+
+gunzip lame-3.98.4.tar.gz
+
+tar -xf lame-3.98.4.tar
+
+cd lame-3.98.4
+
+./configure && make && make install
+
+cd ..
+
+hg clone https://quake2-gwt-port.googlecode.com/hg/ quake2-gwt-port
+
+cd quake2-gwt-port
+
+./build-dedicated-server
+
+./install-resources
+
+After that, running the server went perfectly for me. YMMV.
+
+Comment by guillaum...@gmail.com, Apr 3, 2010
+Using VirtualBox? (3D activated) and Xubuntu OS. last chrome version.
+
+Still error : WebGraphicsContext3DDefaultImpl: glXChooseFBConfig failed
+
+:/
+
+Comment by luigi.vi...@gmail.com, Apr 3, 2010
+Awesome!
+
+Comment by glennpow...@gmail.com, Apr 3, 2010
+Running Chromium 5.0.370.0 (43578) with "/Applications/Chromium.app/Contents/MacOS/Chromium --enable-webgl --no-sandbox" on Mac OS 10.5.8, I get:
+
+WebGL Support Required
+
+For a list of compatible browsers and installation instructions, please refer to
+
+http://code.google.com/p/quake2-gwt-port/wiki/CompatibleBrowsers For a detailed error log, please refer to the JS console.
+
+Comment by Gregory.Rushton@gmail.com, Apr 3, 2010
+Exact same problem as glenpowers, osx 10.5.8 using the default build.
+
+if I follow the advice of editing GwtQuake?.html to point to 'gwtquake.nocache.js' instead of 'gwtquake/gwtquake.nocache.js', I get the blank black screen problem.
+
+Comment by fabio.ci...@gmail.com, Apr 3, 2010
+works great here (mac os x 10.6.3, chromium) except for audio which doesn't seem to exist. installed vorbis-tools and lame via fink and set the heap size as suggested but no audio... anyone else has this problem?
+
+Comment by Theo.Ja...@gmail.com, Apr 3, 2010
+I wrote a detailed post on how to do the install on Ubuntu 9.10: http://theojalba.me/blog/2010/04/quake2-in-the-browser-ubuntu/
+
+Comment by bazzaw...@gmail.com, Apr 3, 2010
+Everything working minus sound after following instructions above
+
+Comment by mdelo...@gmail.com, Apr 4, 2010
+For folks who are using Windows and trying to get this to run under Cygwin, it does seem to want to use PNG files instead of PCX. You can download ImageMagick? and then use 'convert <file>.pcx <file>.png' on each of the .pcx files in war/baseq2 to convert them to PNG format. This will let you see more than a black screen, but as noted by jtchange22, it doesn't seem to completely solve the problem. I'm going to keep monkeying with it (Win7 64-bit) and if any of you are under Windows, please post here how it's going for you. When I get a reliable pipeline going, I'll post it up.
+
+Comment by Lukas.Fi...@gmail.com, Apr 4, 2010
+Mac OS 10.5.8 WebKit? r57054 Sound working perfectly Screen either pixels, black, pink or a static image of the game
+
+Mac OS 10.5.8 Chromium 5.0.370.0 (43585) No sound Black screen
+
+None of the tips listed above worked...
+
+Comment by darcy.ra...@gmail.com, Apr 4, 2010
+To anyone still getting the black screen despite no Javascript errors or compile errors, don't type: cp -r maven-build/server/target/gwtquake/war/gwtquake war. type instead cp -r maven-build/server/target/gwtquake/war/gwtquake war The fullstop at the end from the guide is for the end of a sentence, and not part of a directory. Looking over the comments I suspect a few people have made this mistake.
+
+Comment by tomppeli12@gmail.com, Apr 4, 2010
+I got it working. I forgot to command: cp -r maven-build/server/target/gwtquake/war/gwtquake war So it was my bad. How I can get it to show fps?
+
+Comment by sati.vi...@gmail.com, Apr 4, 2010
+if you are behind proxy. mvn doesn't download all packages even export http_proxy doesn't work out. To get around this issue you have to specify proxy settings in maven-build/maven/conf/settings.xml file by uncommenting and replacing correct values in <proxies>
+
+<proxy>
+<active>true</active> <protocol>http</protocol> <host>proxy.somewhere.com</host> <port>8080</port> <username>proxyuser</username> <password>somepassword</password> <nonProxyHosts>www.google.com|.somewhere.com</nonProxyHosts>
+</proxy>
+</proxies>
+Comment by joonas.t...@gmail.com, Apr 4, 2010
+I can confirm that the server also builds and runs on Solaris 10. You just need to install vorbtools and lame from blastwave. Client of course is Mac
+
+The ftp demo links in "install-resources" don't really work. I had to download it seperatively.
+
+Comment by pcle...@gmail.com, Apr 4, 2010
+works. nice works.
+
+Comment by laroch...@gmail.com, Apr 4, 2010
+hey can you make a firefox port of quake 2?
+
+Comment by holtav...@gmail.com, Apr 4, 2010
+Fantastic work, Google Dudes - take a bow! This is a very impressive demo and milestone for browser caps with HTML5, WebGL, web sockets, and GTK.
+
+I'm clocking about 11 fps on the demo running Chrome 5.0.366.0 on my 2.4Ghz Core 2 Duo MBPro (running both server and client)
+
+I'm running Snow Leopard (10.6.3) - and built/installed/ran as your instructions, with the following results/workarounds others have posted:
+
+Used brew (HomeBrew??) instead of waiting for MacPorts?? to complete - it was much faster
+Had to install mercurial to get source - used: brew install pip && pip install mercurial
+Encountered the maven memory issue - resolved with: export MAVEN_OPTS=-Xmx512m
+Ran the server - got the "WebGL" error message on my first run
+Launched Chromium using: /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --enable-webgl --no-sandbox
+Runs great! Challenging to play on a multi-touch mousepad!
+
+Comment by vha...@gmail.com, Apr 4, 2010
+I compiled on WinXPSP3, only mp3 sound, oggenc fails here but lame from rarewares works good.
+
+However, it shows a WARN about some textures:
+
+Server started
+
+ShutdownGame?
+
+InitGame?
+
+------- Server Initialization -------
+
+Quake2 Initialized
+nextmap: demo2 2010-04-04 23:59:38.359::WARN: Aliased resource: file:/H:/QuakeII/war/baseq2/textures/e1u1/wGRATE1_4.png==file:/H:/QuakeII/war/baseq2/textures/e1u1/wgrate1_4.png 2010-04-04 23:59:39.718::WARN: Aliased resource: file:/H:/QuakeII/war/baseq2/textures/e1u1/FLAT1_2.png==file:/H:/QuakeII/war/baseq2/textures/e1u1/flat1_2.png
+
+and it also shows a red background, btw all those pictures were converted to PNG files. snapshot: 
+
+:-/
+
+Comment by SeifElIslam.Sallam, Apr 5, 2010
+I built the project, Install it, and Run the Server. But when i open in Chromium Under Ubuntu 10.04 beta it gives me a black screen.
+
+Comment by Robin.Ku...@gmail.com, Apr 5, 2010
+under ubuntu 9.10, i'm getting a black screen and the following javascript error in the console
+
+Quake2 Initialized
+gwtquake/80F87E8A6DAD9DE7ED4B3687523EC181.cache.html:7099 gwtquake/80F87E8A6DAD9DE7ED4B3687523EC181.cache.html:59817: static buffer created; id: 0 remaining: 8 gwtquake/80F87E8A6DAD9DE7ED4B3687523EC181.cache.html:6033com.google.gwt.core.client.JavaScriptException?: (TypeError?): undefined is not a function
+
+stack: TypeError?: undefined is not a function
+at CALL_NON_FUNCTION_AS_CONSTRUCTOR (native) at wSd (http://localhost:8080/gwtquake/80F87E8A6DAD9DE7ED4B3687523EC181.cache.html:6312:32) at gSd (http://localhost:8080/gwtquake/80F87E8A6DAD9DE7ED4B3687523EC181.cache.html:5733:36) at zQd (http://localhost:8080/gwtquake/80F87E8A6DAD9DE7ED4B3687523EC181.cache.html:4727:33) at nQd (http://localhost:8080/gwtquake/80F87E8A6DAD9DE7ED4B3687523EC181.cache.html:7641:335) at qQd (http://localhost:8080/gwtquake/80F87E8A6DAD9DE7ED4B3687523EC181.cache.html:6103:55) at uQd (http://localhost:8080/gwtquake/80F87E8A6DAD9DE7ED4B3687523EC181.cache.html:6640:27) at Mub (http://localhost:8080/gwtquake/80F87E8A6DAD9DE7ED4B3687523EC181.cache.html:7049:145) at PDb (http://localhost:8080/gwtquake/80F87E8A6DAD9DE7ED4B3687523EC181.cache.html:8095:1051) at Object.MKd Te? (http://localhost:8080/gwtquake/80F87E8A6DAD9DE7ED4B3687523EC181.cache.html:1387:17)
+type: called_non_callable arguments: undefined
+gwtquake/80F87E8A6DAD9DE7ED4B3687523EC181.cache.html:6033 at Unknown.CALL_NON_FUNCTION_AS_CONSTRUCTOR(Unknown source:0) gwtquake/80F87E8A6DAD9DE7ED4B3687523EC181.cache.html:6033 at Unknown.wSd(Unknown source:0) gwtquake/80F87E8A6DAD9DE7ED4B3687523EC181.cache.html:6033 at Unknown.gSd(Unknown source:0) gwtquake/80F87E8A6DAD9DE7ED4B3687523EC181.cache.html:6033 at Unknown.zQd(Unknown source:0) gwtquake/80F87E8A6DAD9DE7ED4B3687523EC181.cache.html:6033 at Unknown.nQd(Unknown source:0) gwtquake/80F87E8A6DAD9DE7ED4B3687523EC181.cache.html:6033 at Unknown.qQd(Unknown source:0) gwtquake/80F87E8A6DAD9DE7ED4B3687523EC181.cache.html:6033 at Unknown.uQd(Unknown source:0) gwtquake/80F87E8A6DAD9DE7ED4B3687523EC181.cache.html:6033 at Unknown.Mub(Unknown source:0) gwtquake/80F87E8A6DAD9DE7ED4B3687523EC181.cache.html:6033 at Unknown.PDb(Unknown source:0) gwtquake/80F87E8A6DAD9DE7ED4B3687523EC181.cache.html:6033 at Unknown.MKd(Unknown source:0)
+Comment by AmongThe...@gmail.com, Apr 5, 2010
+Am currently plodding through the steps on Hexxeh's flow build of chromium OS. One additional pointer, you will need to install mercurial, sudo apt-get install mercurial
+
+Comment by joshjust...@gmail.com, Apr 5, 2010
+I'm running it on a 2GHz MacBook?, 10.6, latest WebKit? nightly. It comes up and runs just fine, but a few FYIs: the console takes up the whole screen at the start, so I can't see the menus. I have to just hit Return a few times to start the game. Also, some of the objects are flickery. The UI elements, in particular, are almost never visible. Still, amazing! =]
+
+Comment by joshjust...@gmail.com, Apr 5, 2010
+Oh, and if it's not bad form: I wrote a blog post with a few extra steps for Mac/WebKit?, to make it easier: http://joshjustice.wordpress.com/2010/04/02/getting-quake-ii-working-in-webkit-mac/
+
+Comment by Flipe...@gmail.com, Apr 5, 2010
+it suck everyting on tat suck the normal quake is better!!!
+
+thats stupid and gay "no pluggin" you have to do a lot of things thats all stupid and gay
+
+Comment by naikro...@gmail.com, Apr 5, 2010
+@fliper97: to set up the server, some unusual things are required, yes. to play, you only need a ... nevermind. you're a moron.
+
+Comment by johnpe...@gmail.com, Apr 5, 2010
+All the non map elements flicker wildly. It's a shame because I can see that it's running at near 60FPS. This is on the latest webkit.
+
+Comment by johnpe...@gmail.com, Apr 5, 2010
+joshjustice, I have the same issues in webkit, but I can run it fine in Chromium apart from the sound not working. I also can't use the console.
+
+Comment by unrealwa...@gmail.com, Apr 6, 2010
+Built and run successfully. The specified port by './run-dedicated-server port?' seems no effects, it always tries to listen 8080. I still could not test the result as my environment(Chrome/Windows XP/Intel graphic driver) crashes on all WebGL sites like this one or the WebGL examples of webkit.org. but anyway, it is absolutely a great work.
+
+Comment by webmast...@gmail.com, Apr 6, 2010
+So far, I have it all running fine on Windows 7 / Cygwin with Chromium, but I'm still fighting a few issues. I've converted all the pcx files over to PNGs and most things render properly now, but the wall/floor/etc textures are not mapping right. Of course, no sound like others are reporting, as well.
+
+I'll post more if I get the rest of this figured out tomorrow (need to sleep for work in the morning)
+
+Comment by emanuele...@gmail.com, Apr 6, 2010
+Awesome! Can't wait to try this at home!
+
+Comment by lezana...@gmail.com, Apr 6, 2010
+the ftp is broken
+
+Trying mirror: ftp://ftp.fragzone.se/pub/spel/quake2/q2-314-demo-x86.exe Donwload Failed
+
+Comment by michaelj...@gmail.com, Apr 6, 2010
+./chrome --enable-webgl http://localhost:8080/GwtQuake.html
+
+10.04 Ubuntu Lucid, Intel Graphics (gateway laptop) WebGl?? Support Error
+
+Comment by harald.schwarz.at, Apr 7, 2010
+At the client maven pom.xml <version>1.2-SNAPSHOT</version> doesn't work for but <version>1.2</version> did the job
+
+Comment by leonard...@gmail.com, Apr 7, 2010
+Some intel Graphics don't support OpenGL, to test using software rendering: http://learningwebgl.com/blog/?p=11#install-firefox
+
+Comment by kacper...@gmail.com, Apr 9, 2010
+Ok so i have explanation why it doesnt work for me thanks to leonardotw. I suppose i cannot run this because of my GMA950. Is there any possibility to override this problem?
+
+Comment by project member matthias.buchner, Apr 9, 2010
+I am trying to get it working on XP. The step 4 seems to never end for me. C:\quake2-gwt-port>java -jar maven-build\installer\target\gquake-installer-1.0-SNAPSHOT.jar Trying mirror: ftp://ftp.cs.tu-berlin.de/pub/msdos/mirrors/ftp.idsoftware.com/quake2/q2-314-demo-x86.exe Downloading.......................................
+
+I tried to run the server and got the following error:
+
+Quake2 Initialized
+java.io.FileNotFoundException?: maps/demo1.bsp
+
+at jake2.desktop.ResourceLoaderImpl?.pump(ResourceLoaderImpl?.java:65) at jake2.qcommon.ResourceLoader?.Pump(ResourceLoader?.java:36) at jake2.server.QuakeServer?.run(QuakeServer?.java:76) at jake2.gwt.server.GwtQuakeServer?.main(GwtQuakeServer?.java:68)
+However, the server is started. When I access GwtQuake?.html, I get a black page. The Javascript console indicates the JS is looking for some resources I dont have:
+
+Quake2 Initialized
+gwtquake/E566403CA88AF40977FF05D4BFC50CAA.cache.html:7100 gwtquake/E566403CA88AF40977FF05D4BFC50CAA.cache.html:59817: static buffer created; id: 0 remaining: 8 gwtquake/E566403CA88AF40977FF05D4BFC50CAA.cache.html:59818: too many load errors for http://localhost:8282/baseq2/pics/conchars.png&rt&rt&rt&rt; giving up! gwtquake/E566403CA88AF40977FF05D4BFC50CAA.cache.html:59819: too many load errors for http://localhost:8282/baseq2/pics/conback.png&rt&rt&rt&rt; giving up!
+
+I downloaded q2-314-demo-x86.exe manually but I cant find these PNGs.
+
+Comment by project member stefan.haustein, Apr 9, 2010
+Matthias,
+
+this is probably a bug in Downloader.java, see http://code.google.com/p/quake2-gwt-port/issues/detail?id=9
+
+Comment by adria...@gmail.com, Apr 10, 2010
+working beautifully for me on Snow Lep/4GB MacBook? Pro… who needs Flash, now?
+
+Comment by finalfan...@gmail.com, Apr 10, 2010
+ubuntu 10.1 lucid lynx so trying to get sound i ran all the commands in sudo when i try to run ./run-dedicated-server i get ./run-dedicated-server 8080? Unable to parse port: 8080? usage: GwtQuakeServer? port? args? Note that this will use both port? and [port+1]
+
+help plz
+
+Comment by project member matthias.buchner, Apr 10, 2010
+Stephan,
+
+I wrote a quick fix for Downloader.java and PCXConverter.java, I also used PakExplorer?? (http://francis.dupont.free.fr/coindev/pakexp.zip) and... it worked! I get 20 FPS.
+
+However, the sound still does not work. Does anybody fixed the sound issue? I can find the WAV files under war\baseq2\sound. I dont see any error log in the js console.
+
+Comment by project member matthias.buchner, Apr 11, 2010
+I am using vorbis-tools 1.2.0 http://www.xiph.org/downloads/ I get all the wav files converted to mp3 and most OGG files now.
+
+However, the installer freezes after WAVConverter converts the file over 26Ko.
+
+Here is the list: "pyramid.wav", "amb22.wav", "lava1.wav", "v_cmd1.wav", "pilot2.wav", "quake.wav", "v_fac2.wav", "v_gun1.wav", "spark2.wav", "v_bas3.wav", "amb21.wav", "drip_amb.wav", "v_bas6.wav", "flyby1.wav", "xian1.wav", "comp_hum3.wav", "pilot1.wav", "dish1.wav", "battle3.wav", "fan1.wav", "drill2a.wav", "kmtrain.wav", "rocks1.wav", "radio3.wav", "short1.wav", "tele1.wav", "curnt2.wav", "comp_hum2.wav", "water1.wav", "flyby3.wav", "v_cmd2.wav", "pilot3.wav", "voice10.wav", "radio2.wav", "dr_long.wav", "10_0.wav", "v_bas4.wav"
+
+The installer runs until the end if I ignore the conversion to OGG of these files.
+
+My browser is still not playing any sound :(
+
+Comment by koman...@gmail.com, Apr 11, 2010
+Ubuntu 9.10 Karmic - Good Working (I didn't check sound)
+
+If you couldn't see some textures like walls and floors and etc, give Chromium '--no-sandbox' option. It was the reason I couldn't see some textures.
+
+Comment by haust...@google.com, Apr 12, 2010
+Matthias,
+
+could you attach your fix for the downloader to the corresponding bug report: http://code.google.com/p/quake2-gwt-port/issues/detail?id=9
+
+Stefan
+
+Comment by project member matthias.buchner, Apr 12, 2010
+Stephan,
+
+Yes, I will upload my changes asap.
+
+Comment by legend...@gmail.com, Apr 14, 2010
+I tried with chrome-dev-channel on windows-xp: http://build.chromium.org/buildbot/continuous/win/LATEST/
+
+But when start up the browser with "--enable-webgl --no-sandbox", it said: "You are using an unsupported command-line flag: --no-sandbox. Stability and security will suffer".
+
+Is there some solution for the problem? Thanks.
+
+Comment by leo.maka...@gmail.com, Apr 14, 2010
+Are there any ways to start server on remote computer, and connect to it through network?
+
+Comment by murat.a...@gmail.com, Apr 14, 2010
+Hii
+
+I have a problem that @legenddcr have this problem. I installed Chromium from "http://build.chromium.org/buildbot/continuous/linux/LATEST/" on Pardus(linux) 2009. I tested my Chromium at "https://cvs.khronos.org/svn/repos/registry/trunk/public/webgl/sdk/demos/webkit/ManyPlanetsDeep.html" and WebGL works perfectly but Quake doesn't work..
+
+When I try command that "./chrome --enable-webgl --no-sandbox", start up the browser with "--enable-webgl --no-sandbox", it said: "You are using an unsupported command-line flag: --no-sandbox. Stability and security will suffer". What can I do to solve it..? Thanks..
+
+Comment by project member matthias.buchner, Apr 14, 2010
+@legenddcr and @murat.asya I get the same warning message, but you can ignore it: the game will start anyway.
+
+Sometimes, I get a black screen when I load the page. To fix this, try to reload the page or start the JS console.
+
+Comment by murat.a...@gmail.com, Apr 14, 2010
+Thanks @matthias.buchner.. I found my problem!
+
+I did not do this step "Due to a glitch in our maven build files, you currently also need cp -r maven-build/server/target/gwtquake/war/gwtquake war. We are fixing this. " I did not care the step, Now I command "cp -r maven-build/server/target/gwtquake/war/gwtquake war." on my console after Quake2 starts smoothly ...
+
+Comment by MacOS...@gmail.com, Apr 15, 2010
+Everytime I try to build, I receive this error message:
+
+Downloading: http://gwt-maven.googlecode.com/svn/trunk/mavenrepo//gquake/gquake-client/1.0-SNAPSHOT/gquake-client-1.0-SNAPSHOT.war
+[INFO] Unable to find resource 'gquake:gquake-client:war:1.0-SNAPSHOT' in repository gwt-maven (http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/)
+[INFO] ------------------------------------------------------------------------
+[ERROR] BUILD ERROR
+[INFO] ------------------------------------------------------------------------
+[INFO] Failed to resolve artifact.
+
+Missing:
+----------
+1) gquake:gquake-client:war:1.0-SNAPSHOT
+Is there another place I could download gquake-installer-1.0-SNAPSHOT.jar ?
+
+(OS: Mac OS X 10.6)
+
+Comment by feliped...@gmail.com, Apr 15, 2010
+cant get webgl to work. tried both chrome and firefox. enabled webgl in both and still get the same error.
+
+im on ubuntu 9.10
+
+anybody with the same problem have any luck?
+
+thanks in advance
+
+Comment by epkfa...@live.com, Apr 21, 2010
+im stuck at ./run-dedicated-server 8080? it says Unable tho parse port: 8080? usage:GwtQuakeServer? port? quakeargs? Note that this will use both and [port+1? then the command ends
+
+Comment by ryanp52...@gmail.com, Apr 28, 2010
+Can anyone put down some straight instructions to get it running on basic x86 32bit Windows XP. Ive been struggling with it for the past 2 days and still fail to get anything building/running. I've tried using Cygwin to do the linux type build then the eclipse way but i'm unable to build correctly in Cygwin and get these types of errors in Eclipe: "Validating newly compiled units
+
+ERROR? Errors in 'jar:file:/C:/eclipse/plugins/com.google.gwt.eclipse.sdkbundle.2.0.3_2.0.3.v201002191036/gwt-2.0.3/gwt-user.jar!/com/google/gwt/user/client/ui/HasValue?.java'
+ERROR? Line 28: No source code is available for type com.google.gwt.event.logical.shared.HasValueChangeHandlers?<I>; did you forget to inherit a required module?"
+If anyone has it working, you mind msging me or posting a step-by-step, itd be greatly appreciated!! =)
+
+Comment by cupca...@gmail.com, Apr 29, 2010
+I get a segmentation fault on CentOS during step 3 "SIGSEGV" in OpenJDK Server VM 1.6.0-b09
+
+Comment by phoeni...@gmail.com, May 5, 2010
+All is working ok here on Ubuntu Lucid Lynx except sound..
+
+Comment by phoeni...@gmail.com, May 5, 2010
+Lucid Lynx, Chrome 5.0.375.19 dev
+
+
+
+Comment by vanschoo...@gmail.com, May 9, 2010
+Followed instructions above on OSX 10.6.3. Works like a charm!
+
+Comment by zaphodb...@gmail.com, May 15, 2010
+the server starts I get the quake tab in the browser but no picture...any ideas?
+
+Comment by phoeni...@gmail.com, May 15, 2010
+@ zaphodbblx Try with the --no-sandbox option when launching Chrome
+
+Comment by deentarg, May 17, 2010
+WebKit? (r59204) and Chrome (5.0.375.38 beta) works for me. Client is Mac OS X 10.6.3 and server is Debian 5.0 (i386). Installed lame from source.
+
+Did not need --no-sandbox: /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --enable-webgl
+
+Anyone else having problem with the mouse being out-of-sync (or something like that)? Kinda hard to play.
+
+Comment by timothy....@gmail.com, May 18, 2010
+Windows XP/Cygwin Build Instructions
+
+Using http://code.google.com/p/quake2-gwt-port/wiki/BuildingAndRunning 1. Prerequisites: a. Install Chromium, not Chrome (tested with 5.0.394.0 (46121))
+
+You may find a shortcut with --no-sandbox --enable-webgl useful
+b. Install Cygwin (1.7.5-1 + packages @ 20100501) c. Install vorbis-tools in Cygwin setup.exe (tools 1.2.0-2 lib 1.2.3-1) d. Install Java SDK in Windows (Sun jdk 1.6.0_20)
+Set JAVA_HOME to C:\Program Files\Java\jdk<version> Add/Set to CLASSPATH C:\Program Files\Java\jdk<version>\lib;C:\Program
+Files\Java\jdk<version>\jre\lib
+Add to PATH C:\Program Files\Java\jdk<version>\bin;C:\Program
+Files\Java\jdk<version>\jre\bin
+(Tested with Windows System Environment Variables, which are
+automatically propagated to newly opened Cygwin shells) e. Build lame in Cygwin manually (3.98.4 to /usr/local by default):
+./configure make make install
+2. Check Out Latest (@ 20100501) a. Follow Instructions b. Apply Attached Patches using patch:
+
+Unpak directory separator patch
+- for Windows Java only - already works for Unix/Cygwin Java - change to use Java's directory separator rather than hardcode '/' - other locations hardcode '/' but this has not been an issue yet - see
+attached list (some of these may be URL paths and OK)
+WAVConverter deadlock patch
+- avoids deadlocks in child processes due to unread stdout/stderr - optional debugging output
+3. Build using shell script (not batch script)
+
+4. Install Resources using shell script (not batch script)
+
+If you see errors about a missing png file, the first patch isn't working If you freeze on a large wav file, the second patch isn't working
+5. Run Dedicated Server using shell script (not batch script)
+
+If you see errors about a demo level not found, the unpacking was
+incomplete
+6. Navigate to Local Address in Chromium
+
+You may need to disable popup blocking for localhost
+Comment by v.ju.ni.or.v, Jun 6, 2010
+On Lucid Lynx and latest Chromium.
+
+I always see this error... any more with this problem?
+
+ref_gl version: GL 0.01 0: GLimp_SetMode? 1: determining old display mode 2: searching new display mode 3: copying w/h 4: setting mode: jake2.render.DisplayMode?@1 5: storing mode 6: newWindow notification GL_VENDOR: ATI Technologies Inc. GL_RENDERER: ATI Radeon HD 3200 Graphics GL_VERSION: OpenGL ES 2.0 Chromium GL_EXTENSIONS: java.lang.NumberFormatException?: For input string: "Ope" Unknown.lme(Unknown source:0) Unknown.Gke(Unknown source:0) Unknown.$Kd(Unknown source:0) Unknown.yOd(Unknown source:0) Unknown.vFb(Unknown source:0) Unknown.Ecb(Unknown source:0) Unknown.C_d(Unknown source:0)
+
+Comment by Nikolay....@gmail.com, Jun 12, 2010
+Made the textures work on Windows!
+And without any Cygwin -- just cmd. Skipped step 4 due to error mentioned somewhere above, and extracted with PakExporter?. Used ImageMagick? to convert all .pcx to .png (using "mogrify --format png .pcx").
+
+The next problem were all the textures: to convert .wal to .png use Wally tool -- http://www.telefragged.com/wally/downloads.shtml
+
+All works great, 10-20fps. About shitty mouse -- read the FAQ and use right button.
+
+The only unsolved case are sounds..
+
+Comment by zool....@gmail.com, Jun 30, 2010
+I get this error:
+
+Unable to parse port: 8080? usage: GwtQuakeServer? port? args? Note that this will use both port? and [port+1]
+
+Anyone can help?
+
+Comment by acir.man...@gmail.com, Jul 26, 2010
+$ ./install-resources (...) Trying mirror: ftp://ftp.fu-berlin.de/pc/msdos/games/idgames/idstuff/quake2/q2-314-demo-x86.exe Donwload Failed Exception in thread "main" java.lang.RuntimeException?: Too many retries. Download failed.
+
+at jake2.tools.Downloader.main(Downloader.java:59) at jake2.tools.Installer.main(Installer.java:28)
+I'm behind a proxy server and it doesn't connect ftp servers. I've got to download q2-314-demo-x86.exe, but I don't know how to make the installer use my local file instead of trying to download from a ftp server, which will not work.
+
+Is there any parameter that I can do or change anything in source code to avoid trying download from the servers?
+
+Thanks
+
+Comment by tch...@gmail.com, Jul 28, 2010
+I got Unable to parse port: 8080? usage: GwtQuakeServer? port? args? Note that this will use both port? and [port+1] I am on ubuntu 10.04 what do I do?
+
+Comment by jeffrey....@gmail.com, Aug 12, 2010
+I get an error while running the ./build-dedicated-server script.. I ran it with the -e flag for a stacktrace read out
+INFO? ------------------------------------------------------------------------ ERROR? BUILD ERROR INFO? ------------------------------------------------------------------------ INFO? Fatal error compiling
+
+Embedded error: Error while executing the external compiler. java.io.IOException: error=2, No such file or directory INFO? ------------------------------------------------------------------------ INFO? Trace org.apache.maven.lifecycle.LifecycleExecutionException?: Fatal error compiling
+
+at org.apache.maven.lifecycle.DefaultLifecycleExecutor?.executeGoals(DefaultLifecycleExecutor?.java:719) at org.apache.maven.lifecycle.DefaultLifecycleExecutor?.executeGoalWithLifecycle(DefaultLifecycleExecutor?.java:556) at org.apache.maven.lifecycle.DefaultLifecycleExecutor?.executeGoal(DefaultLifecycleExecutor?.java:535) at org.apache.maven.lifecycle.DefaultLifecycleExecutor?.executeGoalAndHandleFailures(DefaultLifecycleExecutor?.java:387) at org.apache.maven.lifecycle.DefaultLifecycleExecutor?.executeTaskSegments(DefaultLifecycleExecutor?.java:348) at org.apache.maven.lifecycle.DefaultLifecycleExecutor?.execute(DefaultLifecycleExecutor?.java:180) at org.apache.maven.DefaultMaven?.doExecute(DefaultMaven?.java:328) at org.apache.maven.DefaultMaven?.execute(DefaultMaven?.java:138) at org.apache.maven.cli.MavenCli?.main(MavenCli?.java:362) at org.apache.maven.cli.compat.CompatibleMain?.main(CompatibleMain?.java:60) at sun.reflect.NativeMethodAccessorImpl?.invoke0(Native Method) at sun.reflect.NativeMethodAccessorImpl?.invoke(NativeMethodAccessorImpl?.java:39) at sun.reflect.DelegatingMethodAccessorImpl?.invoke(DelegatingMethodAccessorImpl?.java:25) at java.lang.reflect.Method.invoke(Method.java:597) at org.codehaus.classworlds.Launcher.launchEnhanced(Launcher.java:315) at org.codehaus.classworlds.Launcher.launch(Launcher.java:255) at org.codehaus.classworlds.Launcher.mainWithExitCode(Launcher.java:430) at org.codehaus.classworlds.Launcher.main(Launcher.java:375)
+Caused by: org.apache.maven.plugin.MojoExecutionException?: Fatal error compiling
+at org.apache.maven.plugin.AbstractCompilerMojo?.execute(AbstractCompilerMojo?.java:498) at org.apache.maven.plugin.CompilerMojo?.execute(CompilerMojo?.java:114) at org.apache.maven.plugin.DefaultPluginManager?.executeMojo(DefaultPluginManager?.java:490) at org.apache.maven.lifecycle.DefaultLifecycleExecutor?.executeGoals(DefaultLifecycleExecutor?.java:694) ... 17 more
+Caused by: org.codehaus.plexus.compiler.CompilerException?: Error while executing the external compiler.
+at org.codehaus.plexus.compiler.javac.JavacCompiler?.compileOutOfProcess(JavacCompiler?.java:343) at org.codehaus.plexus.compiler.javac.JavacCompiler?.compile(JavacCompiler?.java:137) at org.apache.maven.plugin.AbstractCompilerMojo?.execute(AbstractCompilerMojo?.java:493) ... 20 more
+Caused by: org.codehaus.plexus.util.cli.CommandLineException?: Error while executing process.
+at org.codehaus.plexus.util.cli.Commandline.execute(Commandline.java:679) at org.codehaus.plexus.util.cli.CommandLineUtils?.executeCommandLine(CommandLineUtils?.java:69) at org.codehaus.plexus.util.cli.CommandLineUtils?.executeCommandLine(CommandLineUtils?.java:56) at org.codehaus.plexus.compiler.javac.JavacCompiler?.compileOutOfProcess(JavacCompiler?.java:337) ... 22 more
+Caused by: java.io.IOException: Cannot run program "javac" (in directory "/home/jeffp/quake-webgl/quake2-gwt-port/maven-build/server"): java.io.IOException: error=2, No such file or directory
+at java.lang.ProcessBuilder?.start(ProcessBuilder?.java:460) at java.lang.Runtime.exec(Runtime.java:593) at org.codehaus.plexus.util.cli.Commandline.execute(Commandline.java:674) ... 25 more
+Caused by: java.io.IOException: java.io.IOException: error=2, No such file or directory
+at java.lang.UNIXProcess.<init>(UNIXProcess.java:148) at java.lang.ProcessImpl?.start(ProcessImpl?.java:65) at java.lang.ProcessBuilder?.start(ProcessBuilder?.java:453) ... 27 more
+INFO? ------------------------------------------------------------------------ INFO? Total time: 57 seconds INFO? Finished at: Fri Aug 13 00:07:41 CDT 2010 INFO? Final Memory: 27M/194M INFO? ------------------------------------------------------------------------
+Comment by jeffrey....@gmail.com, Aug 12, 2010
+never mind the above post, I was using the regular jdk package.. I switch to openjdk 6 and it runs fine
+
+Comment by finalfan...@gmail.com, Aug 28, 2010
+trying to compile in cygwin got java.io.FileNotFoundException?: maps/demo1.bsp
+
+Comment by michael....@gmail.com, Aug 28, 2010
+finalfanyastytimothy: is that an error from compilation, or attempting to run the server? If from running the server you still need to run the install-resources script
+
+Comment by finalfan...@gmail.com, Aug 29, 2010
+error from running server when i run install-resources i get java.io.FileNotFoundException?: C:\cygwin\home\tim\quake2-gwt-port\war\baseq2\pics\p_megahealth.png
+
+Comment by cahod...@gmail.com, Sep 1, 2010
+Under Debian: id?
+
+Path to dependency:
+gquake:gquake-installer:jar:1.0-SNAPSHOT
+2) gquake:gquake-client:war:1.0-SNAPSHOT
+1 required artifact is missing.
+
+for artifact:
+
+gquake:gquake-installer:jar:1.0-SNAPSHOT
+from the specified remote repositories:
+
+gwt-maven (http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/), central (http://repo1.maven.org/maven2)
+Comment by sylvain.brunerie, Sep 6, 2010
+Why do not provide an online version ? It would be easier to use for new users.
+
+Comment by antarkti...@gmail.com, Sep 21, 2010
+gquake-installer-1.0-SNAPSHOT.jar is missing!!! Please update the trunk! :(
+
+Comment by kelly...@gmail.com, Sep 21, 2010
+I installed on my CentOS 5.4 server (headless, ssh only) and ran into a problem with codehaus repository. It seems they moved their SNAPSHOT url. I fixed the problem by changing two pom.xml files
+
+First, I looked at the xml file in my ~/.m2 repo and saw that the snapshot had moved. (The XML was HTML response with a notice of permanent move.)
+
+I updated the pom.xml with the new repo but had to eventually comment out the SNAPSHOT repo:
+
+~/quake2-gwt-port/maven-build/pom.xml
+
+<pluginRepositories>
+        <pluginRepository>
+                <id>gwt-maven</id>
+                <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
+        </pluginRepository>
+        <pluginRepository>
+                <id>codehaus-new-repo</id>
+                <url>https://nexus.codehaus.org/content/repositories/releases/</url>
+        </pluginRepository>
+<!--
+        <pluginRepository>
+                <id>codehaus-snapshots</id>
+                <url>http://snapshots.repository.codehaus.org/</url>
+        </pluginRepository>
+-->
+</pluginRepositories>
+Then, I changed the client/pom.xml to use the 1.2 GA (which by this time, 1.2 is GA):
+
+~/quake2-gwt-port/maven-build/client/pom.xml 
+
+<plugin>
+  <groupId>org.codehaus.mojo</groupId>
+  <artifactId>gwt-maven-plugin</artifactId>
+  <configuration>
+<!-- <version>1.2-SNAPSHOT</version> -->
+    <version>1.2</version>
+    <logLevel>INFO</logLevel>
+  ⋮
+</plugin>
+This allowed ./build-dedicated-server to compile without issue. I also ran ./install-resources without issue. I then opened up the firewall to allow access:
+
+$ sudo cat iptables | grep 8080
+-A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 8080 -j ACCEPT
+
+$ sudo cat ip6tables | grep 8080
+-A RH-Firewall-1-INPUT -m tcp -p tcp --dport 8080 -j ACCEPT
+
+$ sudo /sbin/service iptables restart
+Flushing firewall rules:                                   [  OK  ]
+Setting chains to policy ACCEPT: filter                    [  OK  ]
+Unloading iptables modules:                                [  OK  ]
+Applying iptables firewall rules:                          [  OK  ]
+Loading additional iptables modules: ip_conntrack_netbios_n[  OK  ]
+Running ./run-dedicated-server 8080 also started but when I directed my browsers (OmniWeb? 5.10.2, Google 6.0.472.62, Safari 5.0.2) to the server http://192.168.2.5:8080/GwtQuake.html , all got a solid black screen.
+
+I'm not sure what's failing but I'll keep at it.
+
+Comment by kelly...@gmail.com, Sep 21, 2010
+I might to add that I'm using my standard maven compiler. Whilst I cd ~/quake2-gwt-port/maven-build/ and compile with 'mvn clean install', I simply ran the ./install-resources from ~/quake2-gwt-port/ . I'm using maven 2.2.1 for my other projects and thought I'd simply use it here as well.
+
+$ mvn -version
+Apache Maven 2.2.1 (r801777; 2009-08-06 12:16:01-0700)
+Java version: 1.6.0_19
+Java home: /usr/java/jdk1.6.0_19/jre
+Default locale: en_US, platform encoding: UTF-8
+OS name: "linux" version: "2.6.18-164.el5" arch: "amd64" Family: "unix"
+Comment by kelly...@gmail.com, Sep 21, 2010
+I might also add the versions I have of the requiste tools:
+
+$ lame --help | head -n1
+LAME 64bits version 3.98.4 (http://www.mp3dev.org/)
+
+$ yum list | grep 'vorbis-tools'
+vorbis-tools.x86_64                        1:1.1.1-3.el5               installed
+Comment by kelly...@gmail.com, Oct 1, 2010
+Update: I went through the steps again with success. I believe in my haste on Sep 21, I left out the copy step:
+
+cp -r maven-build/server/target/gwtquake/war/gwtquake war/
+I couldn't get Chrome or Webkit (nightly build) to run but Firefox runs okay on my Mac.
+
+Comment by insidi...@gmail.com, Oct 23, 2010
+Notice a lot of people are talking about using maven instead of ant. Recent change in preferred build tools? Anyway, I'm having an issue installing resources using 'ant run'.
+
+Specifically, it gets to the first 'wal' texture and does this:
+
+[java] textures/e1u1/damage1_2.wal [java] Exception in thread "main" java.lang.NullPointerException [java] at jake2.qcommon.Compatibility.newString(Compatibility.java:51) [java] at jake2.qcommon.qfiles$miptex_t.<init>(qfiles.java:367) [java] at jake2.qcommon.qfiles$miptex_t.<init>(qfiles.java:357) [java] at jake2.tools.WALConverter.LoadWAL(WALConverter.java:41) [java] at jake2.tools.WALConverter.convert(WALConverter.java:36) [java] at jake2.tools.Unpak.convertFile(Unpak.java:133) [java] at jake2.tools.Unpak.unpak(Unpak.java:237) [java] at jake2.tools.Unpak.convertDir(Unpak.java:100) [java] at jake2.tools.Unpak.main(Unpak.java:88) [java] at jake2.tools.Installer.main(Installer.java:37)
+
+Comment by insidi...@gmail.com, Oct 23, 2010
+Mrrg. Wish you could edit comments! Okay, well, I mis-guessed at whatever markup you guys are using up there, but yeah, the important information is all there >.<
+
+Comment by delan.az...@gmail.com, Oct 30, 2010
+Same here, getting a NullPointerException? on the first wal file.
+
+     [java] players/female/brianna.pcx
+     [java] Opened packfile /home/delan/build/quake2-gwt-port/raw/baseq2/pak0.pak (1106 files)
+     [java] 
+     [java] pics/p_megahealth.pcx
+     [java] models/weapons/g_machn/skin.pcx
+     [java] models/monsters/soldier/skin_ss.pcx
+     [java] pics/w_chaingun.pcx
+     [java] models/items/keys/red_key/tris.md2
+     [java] textures/e1u1/damage1_2.wal
+     [java] Exception in thread "main" java.lang.NullPointerException
+     [java]     at jake2.qcommon.Compatibility.newString(Compatibility.java:51)
+     [java]     at jake2.qcommon.qfiles$miptex_t.<init>(qfiles.java:367)
+     [java]     at jake2.qcommon.qfiles$miptex_t.<init>(qfiles.java:357)
+     [java]     at jake2.tools.WALConverter.LoadWAL(WALConverter.java:41)
+     [java]     at jake2.tools.WALConverter.convert(WALConverter.java:36)
+     [java]     at jake2.tools.Unpak.convertFile(Unpak.java:133)
+     [java]     at jake2.tools.Unpak.unpak(Unpak.java:237)
+     [java]     at jake2.tools.Unpak.convertDir(Unpak.java:100)
+     [java]     at jake2.tools.Unpak.main(Unpak.java:88)
+     [java]     at jake2.tools.Installer.main(Installer.java:37)
+Comment by DerK...@gmail.com, Oct 31, 2010
+The NPE at jake2.qcommon.Compatibility.newString should be fixed by the patch attached here: http://code.google.com/p/quake2-gwt-port/issues/detail?id=34 Please comment there if it helps you and vote for it.
+
+Comment by wormb...@gmail.com, Nov 21, 2010
+Chromium 9.0.592.0 (66912) , ubuntu 10.04.1 amd64.
+
+wormball@wormball-desktop:~/shit/chrome-linux$ ./chrome --enable-webgl Xlib: extension "RANDR" missing on display ":0.0". Attempting to load libmoonloaderxpi Xlib: extension "RANDR" missing on display ":0.0". libEGL warning: unable to load st_GL.so The program 'exe' received an X Window System error. This probably reflects a bug in the program. The error was 'BadLength? (poly request too large or internal Xlib length erro'.
+
+(Details: serial 118 error_code 16 request_code 134 minor_code 17) (Note to programmers: normally, X errors are reported asynchronously;
+that is, you will receive the error a while after causing it. To debug your program, run it with the --sync command line option to change this behavior. You can then get a meaningful backtrace from your debugger if you break on the gdk_x_error() function.)
+Comment by ras...@notion.se, Dec 14, 2010
+WebKit? r73886 — no errors, black screen: http://d.pr/glGQ
+
+Comment by chre...@gmail.com, Dec 21, 2010
+This is completely awesome! I am so glad I tried it out :D I love the notifications that pop up when you don't have a particular weapon. This is the future of gaming right here.
+
+Comment by blo...@gmail.com, Dec 28, 2010
+i dont understand how to install: 3 - ant run (will install the original Quake II demo resources, build the client and server code, then run the server).
+
+Comment by *asfa...@yourgolftravel.com, Jan 11, 2011
+Could I suggest an installation improvement? One thing I find really annoying is that doing 'ant run' causes it to re-download the demo sources at the stupidly slow speed from iD's ftp server every time I recreate the repo. If I have a copy of the q2 demo exe in the root of the project, it should just use it.
+
+Comment by hoytd...@gmail.com, Jan 27, 2011
+I have an April 2010 blog post about doing this in Mandriva 2010 which worked fine for me then, but not now (January 2011). Now that I'm using FF4 I thought I'd give it another try and update the blog for the non-Ubuntu users.
+
+http://maximumhoyt.blogspot.com/2010/04/quake2-in-browser-in-mandriva-2010.html
+
+What is this "ant run"?
+
+Why will ./build-dedicated-server no longer work?
+
+Comment by stes...@gmail.com, Feb 9, 2011
+'ve cloned the repository here up to BitBucket?.org and applied the NPE patch above along with the following minor changes.
+
+# Allow q2-314-demo-x86.exe to be found at ~/Downloads/q2-314-demo-x86.exe or ./q2-314-demo-x86.exe # Downloader now downloads to "./q2-314-demo-x86.exe" so that it will not be constantly re-downloaded after doing clean-resources
+
+Feel free to clone from here https://bitbucket.org/steshaw/quake2-gwt-port.
+
+Developers here, feel free to pull my changes.
+
+Comment by pozzi.st...@gmail.com, Feb 11, 2011
+When I try to do "ant run", I have this problem:
+
+ant run Buildfile: /home/spozzi/Desktop/hg/build.xml
+
+BUILD FAILED /home/spozzi/Desktop/hg/build.xml:6: Unexpected element "{}html" {antlib:org.apache.tools.ant}html
+
+Total time: 0 seconds
+
+How can I resolve? Please feel free to reply also via email. Thank you
+
+Comment by dustin.m...@gmail.com, Jul 11, 2011
+I believe I have everything compiled and running correctly, but when I point Chromium to:
+
+chromium-browser --enable-webgl http://localhost:8080/GwtQuake.html
+
+All I get is a blank screen. Here is what is running when I do "ant run":
+
+[user@localhost quake2-gwt-port]$ ant run
+Buildfile: /home/user/quake2-gwt-port/build.xml
+
+libs:
+
+server:
+    [javac] /home/user/quake2-gwt-port/build.xml:57: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+
+install-resources:
+     [java] raw/baseq2 already exists; no need to download
+     [java] war/baseq2 already exists; no need to unpak
+
+client.build:
+
+libs:
+
+server:
+    [javac] /home/user/quake2-gwt-port/build.xml:57: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+
+client.run:
+
+build:
+
+run:
+     [java] 2011-07-11 00:26:00.023:INFO::jetty-8.0.0.M2-SNAPSHOT
+     [java] execing config.cfg
+     [java] 2011-07-11 00:26:00.104:INFO::Started SelectChannelConnector@0.0.0.0:8080
+     [java] execing config.cfg
+     [java] ServerWebSocketImpl(27910)
+     [java] Starting Server
+     [java] Server started
+     [java] ServerWebSocketImpl(27901)
+     [java] Starting Server
+     [java] 2011-07-11 00:26:00.275:INFO::jetty-8.0.0.M2-SNAPSHOT
+     [java] 2011-07-11 00:26:00.279:INFO::Started SelectChannelConnector@0.0.0.0:27910
+     [java] 2011-07-11 00:26:00.279:INFO::jetty-8.0.0.M2-SNAPSHOT
+     [java] 2011-07-11 00:26:00.281:INFO::Started SelectChannelConnector@0.0.0.0:27901
+     [java] Server started
+     [java] ==== ShutdownGame ====
+     [java] ==== InitGame ====
+     [java] ------- Server Initialization -------
+     [java] ====== Quake2 Initialized ======
+     [java] 
+     [java] nextmap: demo2
+I'm running on Fedora 15 and use Chromium version: 12.0.718.0 (0) Built from source for Fedora release 15 (Lovelock)
+
+Thanks.
+
+Comment by FotoX...@gmail.com, Jul 22, 2011
+On Linux Ubuntu 11.04, after ant run :
+
+Buildfile: /opt/quake2-gwt-port/build.xml
+
+libs:
+
+BUILD FAILED
+/opt/quake2-gwt-port/build.xml:48: Directory /opt/quake2-gwt-port/war/WEB-INF/lib creation was not successful for an unknown reason
+
+Total time: 1 second
+Comment by solo...@gmail.com, Jul 25, 2011
+Can someone post CPU utilization and a system config like CPU-Z during gameplay? I can't build it but I want to understand the resource requirements. Almost any ref point will do, might be best if the system has some sort of contemporary GPU-based HTML5 acceleration (like AMD Brazos/Zacate).
+
+Comment by neildrth...@gmail.com, Sep 8, 2011
+Running chromium13/ubuntu10.04. Succesful build after 'sudo ant run' (running 'ant run' made the build quit with java error: 1) but when I open browser I also get a blank black screen, no errors in terminal, says server is running but the browser the console gives multiple errors for images not found in /quake2-gwt-port/baseq2/pics - I looked in that folder and there are only 2 images. Perhaps something didn't download properly from the Quake II repos?
+
+Comment by pjh...@gmail.com, Sep 15, 2011
+I'm having the same problem as @neildrth...
+
+Chromium 12.0.742.112 (90304) Ubuntu 11.04
+
+Comment by einschne...@gmail.com, Oct 11, 2011
+has the address of the source code changed? I just can't create a local copy :(
+
+https://code.google.com/p/quake2-gwt-port/ ???
+
+Comment by TruSktr, Oct 14, 2011
+Can I use JRE, or must I use openjdk to make?
+
+Comment by TruSktr, Oct 14, 2011
+What's the difference between "ant" and "ant run"? And if I just do "Ant" what do I have to do next?
+
+Comment by zac.harr...@gmail.com, Nov 5, 2011
+I know there hasn't been a post in a month, but if any one reading this STILL can't get it to work because of black screen troubles, the reason that is happening is because your browser DOES NOT have WebGL enabled (Or it just doesn't have it, IE, lol), i found that the easiest way was to just use firefox, it worked for me straight out of the bag. But if it still doesn't work, all you need to do is go to about:config in firefox and look for WebGLDisabled(or something similar) and set it to "False".
+
+Hope this helps someone to get Quake II working because CoD and Battlefield can kiss it's ass!
+
+Comment by parker.l...@gmail.com, Nov 7, 2011
+It seems Quake gwt uses some functions WebKit? has deprecated.
+
+In the Chrome javascript console it shows
+
+"event.layerX and event.layerY are broken and deprecated in WebKit?. They will be removed from the engine in the near future"
+
+I suppose this is the cause in Firefox too.
+
+Comment by dennisde...@gmail.com, Nov 21, 2011
+I try to compile the code on osx 10.5.8 but get the following error "class file has wrong version 50.0, should be 49.0" early in the build. Did some files change? How can i get the older version of the file (error code below)? Thanks,d!
+
+dir:quake2-gwt-port computer$ sudo ant run Password: Buildfile: build.xml
+
+libs:
+
+server:
+
+javac? Compiling 271 source files to /Users/ddebel/quake2-gwt-port/war/WEB-INF/classes javac? /Users/ddebel/quake2-gwt-port/src/com/google/gwt/corp/compatibility/Numbers.java:18: cannot access com.googlecode.gwtgl.array.Float32Array? javac? bad class file: /Users/ddebel/quake2-gwt-port/lib/gwtgl-0.3/gwtgl-0.3.jar(com/googlecode/gwtgl/array/Float32Array?.class) javac? class file has wrong version 50.0, should be 49.0 javac? Please remove or make sure it appears in the correct subdirectory of the classpath. javac? import com.googlecode.gwtgl.array.Float32Array?; javac? ^ javac? 1 error
+BUILD FAILED
+
+Comment by dennisde...@gmail.com, Nov 23, 2011
+...update: It works like a charm on osx 10.6.8 tough.... install homebrew (read the requirements e.g. install java upate 6, xcode etc) brew vorbis brew lame mecurial (python easy_install) checkout code (hg etc, wait if it seems to hang on) sudo ant run...
+
+enjoy!
+
+Comment by adolf.bi...@gmail.com, Nov 24, 2011
+includeantruntime' was not set
+
+Comment by HoundE...@gmail.com, Nov 29, 2011
+Most everything seems to be working great for me EXCEPT there is no gun visible in my hands and all enemies seem to be invisible. Ideas? (I am running the server on a Linux box but accessing it from Windows)
+
+Comment by hoytd...@gmail.com, Dec 2, 2011
+I have compiled it on Mandriva 2010 and have a guide for rpm-based systems at http://maximumhoyt.blogspot.com/2010/04/quake2-in-browser-in-mandriva-2010.html
+
+There were two errors during the build:
+
+/usr/bin/build-classpath: error: Could not find jaxp_parser_impl Java extension for this JVM /usr/bin/build-classpath: error: Could not find xml-commons-apis Java extension for this JVM
+
+And it runs very slowly on my system (Athlon XP-3000, 2GB RAM, nVidia GeForce? 8400GS, FF4.1).
+
+Comment by htt.c...@gmail.com, May 1, 2012
+After I use command: sudo ant run. It stopped at the step in picture:  I 've waited for about 20 minutes but nothing changed. Plz help me solving it! (I'm running code on ubuntu server 12.04)
+
+Comment by pala.gra...@gmail.com, May 24, 2012
+same things for me.
+
+Comment by zac.harr...@gmail.com, May 30, 2012
+"After I use command: sudo ant run. It stopped at the step in picture: I 've waited for about 20 minutes but nothing changed. Plz help me solving it! (I'm running code on ubuntu server 12.04) "
+
+umm, have you tried going to http://localhost:8080/GwtQuake.html
+
+Cause that IS the end
+
+Comment by s.sims.m...@gmail.com, Nov 6, 2012
+I managed to get this running on Windows on Chrome without any issues. Just checked out the code, ran the main ant task, then ant server. The sound is currently broken and the frame rate very low, but I think with some tweaking this can be sorted out. All resources seem to download and stream from the server correctly.
+
+The point is its pretty impressive that it is this easy to build and run.<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Eclipse setup: http://http://code.google.com/p/quake2-gwt-port/wiki/EclipseSetup
+ EclipseSetup  
+Using Eclipse 
+Featured Updated Oct 9, 2011 by stefan.haustein
+Three easy steps:
+
+First, build the project (this is necessary for some dependencies).
+Install the Google Plugin for Eclipse (not strictly necessary, but recommended).
+Import the project (File/Import/Existing Projects into Workspace: project files are in the root of the repo).
+Manual Eclipse project setup / build path fixes:
+
+Use "quake2-gwt-port/src" as the source folder
+Exclude com.google.gwt.corp.emul from the build path
+Make sure "Google Web Toolkit" is added as a Library
+Add missing stuff from the lib directory to the libraries as needed
+Make sure the output path is "quake2-gwt-port/war/WEB-INF/classes"
+To recompile:
+
+Click the little red toolbox icon in your toolbar (courtesy of the Google Plugin).
+To run the server:
+
+Select Run/Debug Configurations.
+Select GwtQuakeServer and click Debug.
+To debug the code in dev mode:
+
+This isn't quite working at the moment, because WebKit versions that support WebGL have just been too flaky.
+It might work in Chrome/Windows (where there is a dev mode plugin), but we haven't tried it yet.
+Comment by shawn.tu...@gmail.com, Apr 15, 2010
+I was able to get this almost 100% setup for a Windows setup. I originally did a build on a linux machine and got it running there. Once it was working on my linux environment I tried it within Eclipse. I copied the baseq2 from my linux machine so I didn't have to try and build those resources and as such didn't need the extra packages setup in Windows. Imported project fine and was able to run the maven build within Eclipse to build out the project.
+
+My problem was on the GWT Compile. Every time I have tried it I always get error output as:
+
+Compiling module com.google.gwt.corp.Runtime
+
+Validating newly compiled units
+ERROR? Errors in 'jar:file:/C:/Development/gwt-2.0.3/gwt-user.jar!/com/google/gwt/user/client/Event.java'
+ERROR? Line 41: No source code is available for type com.google.gwt.event.shared.GwtEvent?<H>; did you forget to inherit a required module? ERROR? Line 42: No source code is available for type com.google.gwt.event.dom.client.HasNativeEvent?; did you forget to inherit a required module? ERROR? Line 47: No source code is available for type com.google.gwt.event.shared.GwtEvent?<H>.Type<H>; did you forget to inherit a required module? ERROR? Line 73: No source code is available for type com.google.gwt.event.shared.HandlerManager?; did you forget to inherit a required module? ERROR? Line 221: No source code is available for type com.google.gwt.event.shared.EventHandler?; did you forget to inherit a required module? ERROR? Line 414: No source code is available for type com.google.gwt.event.shared.HandlerRegistration?; did you forget to inherit a required module?
+This occurs within the console for quite a few files. I am not 100% comfortable using gwt yet so not sure if this is a quake2-gwt issue or gwt inside Eclipse. If I ignore the error and instead copy the gwtquake folder from within the maven-build/server/target... I am actually able to use the GwtQuakeServer?.launch file to run the server. Unfortunately the main reason why I am trying to get it running in Eclipse is to view the gwt javascript and to debug.
+
+Anyone know how to fix the GWT error?
+
+Comment by ryanp52...@gmail.com, Apr 28, 2010
+I have the same errors Shawn. If anyone could help, it'd be much appreciated! I unfortunately don't have access to a linux environment at the moment. =(
+
+Comment by gaucor...@gmail.com, Jan 7, 2011
+Hello,
+
+I followed this 3 steps but my Eclipse IDE complains about many errors. The "ant run" command runs successfully (I can play the game). I believe something is wrong with the project properties in Eclipse.
+
+In most of source files I can see "The declared package does not match the expected package" so I tried to modify the build path in different ways but I never managed to actually solve the problem.
+
+Moving the file or changing the declaration may solve the package declaration problem but would lead to new errors detected in the code that have to be solved one by one. I suppose this is not the way.
+
+Can anybody specify how to configure the build path, libraries, and other properties in Eclipse?
+
+I am using Eclipse Java EE IDE version Helios Release on windows XP.
+
+Thanks.
+
+
+________________________________________________________________________________________
+Code Cleanup Plan
+https://docs.google.com/document/d/1r3EBiHd-hCyBqMmpmxXQuerGP2tIT9LuRDAmlci0FQs/edit
+
+_______________
+Webkit Nightly Builds (Mac OS X)
+Download the nightly build from http://nightly.webkit.org/
+Type this into a terminal: defaults write com.apple.Safari WebKitWebGLEnabled -bool YES
+Chrome Development Branch
+Windows:
+Download Chromium: http://build.chromium.org/buildbot/continuous/win/LATEST/
+Run chrome.exe --enable-webgl
+Mac:
+Download Chromium: http://build.chromium.org/buildbot/continuous/mac/LATEST/
+Run ./Chromium.app/Contents/MacOS/Chromium --enable-webgl
+Linux:
+Download Chromium: http://build.chromium.org/buildbot/continuous/linux/LATEST/
+Run ./chromium --enable-webgl
+Firefox 4.02b Nightly
+Install the nightly build from http://ftp.mozilla.org/pub/mozilla.org/firefox/nightly/latest-trunk/
+Enable WebGL: Open the URL about:config and set the property webgl.enabled_for_all_sites to true
+Comment by tejaswy...@gmail.com, Apr 1, 2010
+no firefox ? sad
+
+Comment by jeremyca...@gmail.com, Apr 1, 2010
+why no firefox support?
+
+Comment by evantsc...@gmail.com, Apr 1, 2010
+@jeremy: Because Firefox doesn't support parts of the code. It is written in pre-release HTML5 (all HTML5 is prerelease).
+
+Comment by clintcar...@gmail.com, Apr 1, 2010
+It's cool to see what WebGL can do. Is WebGL considered part of HTML5? So that kind of functionality would be built right into the browser without the need to download plug-ins. (nevermind, just popped open another tab and started reading up on HTML5)
+
+Guess I'm gonna waste the next few hours reading up on HTML5... stupid wealth of information at your fingertips...
+
+Comment by asadotz...@gmail.com, Apr 1, 2010
+@evantschyy, what parts of the code does Firefox not support. Firefox has been a leader in HTML5 "pre-release" features, often beating Chrome to the punch on key HTML5 features.
+
+Comment by anotherhero, Apr 1, 2010
+@asadotzler, I guess it doesn't support the 3d context for the canvas element yet..
+
+Comment by styfle...@gmail.com, Apr 1, 2010
+@asadotzler Not really. Chrome and Safari have really passed Firefox with supporting new HTML5 features because like evantschuy said, those aren't standards yet. The Mozilla team doesn't want to start supporting something that can change the next day or be removed completely. They think long term. Look at the whole OGG vs H264 debate.
+
+Comment by antwa...@gmail.com, Apr 2, 2010
+Does it work with Firefox 3.7a3 ?
+
+Comment by konst...@gmail.com, Apr 2, 2010
+Firefox forever!!!!!!
+
+Comment by ckra...@gmail.com, Apr 2, 2010
+I'm starting to think webkit's where it's at.
+
+Comment by yava...@gmail.com, Apr 2, 2010
+Getting "WebGraphicsContext3DDefaultImpl: glXChooseFBConfig failed" with the latest chrome. Using ubuntu 9.10, kernel: 2.6.31-14-generic, video: ATI . Other GL applications work fine
+
+Comment by skdam...@gmail.com, Apr 2, 2010
+Firefox is still too bloated for my tastes. I'm with webkit browsers these days.
+
+Comment by project member stefan.haustein, Apr 2, 2010
+@jeremycalvert93: We would love to support FireFox. I think we would not have WebGL today without Vladimir Vukićević's pioneering work on Canvas 3D and WebGL. Actually FireFox was the first browser to support Canvas 3D: http://blog.vlad1.com/2007/11/26/canvas-3d-gl-power-web-style/
+
+The main problem with FireFox is JavaScript performance: While WebGL shifts a lot of the work to the graphics card, there is still a significant amount of JavaScript code that needs to be executed. The frame rates we saw when doing experiments with FireFox were just too low to make the game playable.
+
+Comment by dabu...@gmail.com, Apr 2, 2010
+I'm getting the same thing as yavalek
+
+Comment by zbigniew...@gmail.com, Apr 2, 2010
+hey guys. Is is possible to turn off your browser checking? I'd love to test it on Fx nightly builds, but the JS code is compressed beyond readability and I couldn't find a switch to launch it on Gecko.
+
+Thanks.
+
+Comment by jmsuns...@gmail.com, Apr 2, 2010
+I have the same issue as yavalek and dabukun
+
+Comment by muu...@gmail.com, Apr 2, 2010
+WebGraphicsContext3DDefaultImpl: glXChooseFBConfig failed issue here too on Ubuntu 10.04 Beta with Chromium
+
+Other WebGL demos won't work too.
+
+Comment by bassica...@gmail.com, Apr 2, 2010
+The linux instructions should refer to './chrome' as opposed to './chromium'
+
+Comment by j.bros...@gmail.com, Apr 2, 2010
+Running Chromium r43467 and it gives the WebGraphicsContext3DDefaultImpl: glXChooseFBConfig failed error here as well. Ubuntu 10.04, Intel gfx. glxheads shows:
+
+GL_VERSION: 1.4 Mesa 7.7.1-DEVEL GL_VENDOR: Tungsten Graphics, Inc GL_RENDERER: Mesa DRI Intel(R) 945GM GEM 20091221 2009Q4 x86/MMX/SSE2
+Note: on Linux, the command line should be: ./chrome --enable-webgl --no-sandbox instead of: ./chromium --enable-webgl --no-sandbox
+
+Comment by wei....@gmail.com, Apr 2, 2010
+According to http://googlechromereleases.blogspot.com/2010/04/dev-channel-update.html, --no-sandbox is no longer needed.
+
+Comment by toadwarr...@gmail.com, Apr 2, 2010
+Totally awesome. Thank you for doing this!
+
+Comment by per.fra...@gmail.com, Apr 2, 2010
+WinRAR will say that chrome-win32.zip is corrupted (unexpected end of file) the mini_installer will run, then disappear with no effect.
+
+any ideas?
+
+Comment by per.fra...@gmail.com, Apr 2, 2010
+ok, got the mini_installer to work by extracting the files like an archive... but when i connect to the server i get this message:
+
+WebGL Support Required
+
+For a list of compatible browsers and installation instructions, please refer to
+
+http://code.google.com/p/quake2-gwt-port/wiki/CompatibleBrowsers For a detailed error log, please refer to the JS console.
+
+Comment by haust...@google.com, Apr 2, 2010
+@zbigniew.braniecki we do not do any browser check -- we only show the "WebGL required" message when the call to getContext (or some part of the 3d initialization) fails. We try the follwing context names: "webgl", "moz-webgl", "webkit-webgl", "webkit-3d". There is an undocumented wireframe mode that bypasses the 3d context creation and uses canvas 2d for rendering. It can be activated by adding #wireframe to the URL.
+
+Comment by weebzoo....@gmail.com, Apr 2, 2010
+No IE9 ?
+
+Comment by jfvo...@gmail.com, Apr 2, 2010
+and Opera?
+
+Comment by jordonwii, Apr 2, 2010
+You don't need the --no-sandbox anymore according to the latest dev release blog post.
+
+Comment by jordonwii, Apr 2, 2010
+Edit: I did need --no-sandbox to get it to work.
+
+Comment by per.fra...@gmail.com, Apr 2, 2010
+got it working with #wireframe, but otherwise i get the "WebGL Support Required" message (with nothing in the JS console.)
+
+any clues on how to get graphics going?
+
+Comment by usan...@gmail.com, Apr 2, 2010
+Last time I checked even IE9 still needs a quicker boost in JavaScript? performance because by the time IE9 final is released JV performance on all other browsers will will be ahead of IE9 by a long shot. My expectations...
+
+Comment by screenwr...@gmail.com, Apr 2, 2010
+Still looking for IE...
+
+Comment by adrianveliz, Apr 2, 2010
+Like others here I was able to run with the #wireframe because I got the webgl support required message without any js errors. Using build 43563, same message with and without the no-sandbox. Still even the wireframe looked really cool!
+
+Comment by zhai...@gmail.com, Apr 2, 2010
+fIREfoX!
+
+Comment by ericb...@gmail.com, Apr 2, 2010
+IE10 FTW
+
+Comment by nazariuskappertaal, Apr 2, 2010
+Compiled/Installed correctly, server running, running Chromium (daily build ppa) on Ubuntu 9.10 with the "--enable-webgl --no-sandbox", and the ttp://build.chromium.org/buildbot/continuous/linux/LATEST/ chrome with the same flags (seem to be the same version).
+
+However I still get the WebGL Support Required error report. Any ideas?
+
+Comment by xinm...@gmail.com, Apr 2, 2010
+creaying
+
+Comment by mitrandi...@gmail.com, Apr 2, 2010
+@nazariuskappertaal f*cking ATI...
+
+Comment by richard....@gmail.com, Apr 3, 2010
+Like many people here I get
+
+WebGraphicsContext3DDefaultImpl: glXChooseFBConfig failed
+
+Any advice?
+
+Comment by haust...@google.com, Apr 3, 2010
+@adrianveliz Do other WebGL demos work with your configuration, e.g. http://webkit.org/blog-files/webgl/SpiritBox.html
+
+Comment by david%du...@gtempaccount.com, Apr 3, 2010
+I can't get any WebGL content to run (just like I had webgl disabled). I tried with the latest nightly and the dev builds of chrome/chromium for ubuntu 10.04. I tried ./chrome --enable-webgl and the --no-sandbox commands but it changed nothing. Any ideas?
+
+Comment by susee...@gmail.com, Apr 3, 2010
+chrome-linux# ./chrome --enable-webgl http://localhost:8080/GwtQuake.html
+
+./chrome: error while loading shared libraries: libX11.so.6: cannot open shared object file: No such file or directory
+
+chrome-linux# file chrome
+
+chrome: ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.8, not stripped
+
+chrome-linux# file /usr/lib64/libX11.so.6.3.0
+
+/usr/lib64/libX11.so.6.3.0: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, stripped
+
+Any suggestions to get it working?
+
+Comment by jimsante...@gmail.com, Apr 3, 2010
+{Debian/unstable X86-64}
+
+The version given above is the 32-bit version. Skip it on X64. The 64-bit version is here:
+http://build.chromium.org/buildbot/continuous/linux64/LATEST/
+
+Got black screen, the following comment showed the way:
+"If you are getting black screen in folder quake2-gwt-port run command:
+
+cp -R maven-build/server/target/gwtquake/war/gwtquake ./war/"
+
+This is not a joke. The thing actually runs. Cool.
+Comment by jimsante...@gmail.com, Apr 3, 2010
+# Linux on x86-64:
+
+Download Chromium: http://build.chromium.org/buildbot/continuous/linux64/LATEST/
+Run ./chromium --enable-webgl --no-sandbox
+Comment by kabirj...@gmail.com, Apr 3, 2010
+Opera
+
+Comment by narendra.sisodiya, Apr 3, 2010
+I will view it when is supported by Firefox. Firefox == web
+
+Comment by lilmo...@gmail.com, Apr 3, 2010
+Opera support would be nice.
+
+Comment by mcgrof, Apr 3, 2010
+I'm on 64-bit. I tried downloading the latest 64-bit build provided above but I get:
+
+WebGraphicsContext3DDefaultImpl: glXChooseFBConfig failed
+
+Oh wait, I need a 3d driver support don't I? Damn you Nvidia.
+
+Comment by mcgrof, Apr 3, 2010
+Ok after I enabled 3d it worked :), good stuff guys.
+
+Comment by zbigniew...@gmail.com, Apr 3, 2010
+@haust: Thanks for your response. I expect that you must be checking for the wrong name, because I am in fact using webgl enabled Gecko browser. I can launch all Mozilla webgl tests and they run just fine.
+
+I'll play more around it and will try to figure out where the bug may be. Thanks:)
+
+Comment by adrianveliz, Apr 3, 2010
+@haust: sorry for the delay. The SpiritBox? site gives me these messages: "You don't have a version of WebKit? with WebGL or you don't have it enabled.", "No WebGL context found"
+
+I ran SpiritBox? and quake with and without no-sandbox and with enable-webgl in build 43582 on Ubuntu 9.10 x86 32-bit. Hope this helps.
+
+Comment by Horacioo...@gmail.com, Apr 3, 2010
+Cometen un grave error, donde está Opera?
+
+Comment by wielkie...@gmail.com, Apr 4, 2010
+I also encourated this message: WebGraphicsContext3DDefaultImpl: glXChooseFBConfig failed
+
+This is GPU driver-related, I think. Open Source drivers (Mesa ones) are affected in my view. I can confirm this with r600 mesa driver. However, I dug into webkit source code and (hopefully) found what caused this issue. I'm now downloading chromium source code to test that.
+
+glXChooseFBConfig fails because of this: GLX_DRAWABLE_TYPE, GLX_PBUFFER_BIT
+
+However (AFAIK) r600 supports pbuffers. More silly (in my simple C test-case), changing GLX_PBUFFER_BIT to GLX_PBUFFER_BIT|GLX_WINDOW_BIT works like a charm!
+
+This may be a problem with mesa or xf86-video-radeon. I hope this change will fix the issue. If so, I'll attach a patch here. Of course fixing OS drivers would be even better :) (I'm not an X11 expert, maybe it's intended behaviour)
+
+Comment by wielkie...@gmail.com, Apr 4, 2010
+Nope, no pbuffer on Mesa site. Just only closed source (nvidia/fglrx) drivers. I'll try this with fglrx later.
+
+Comment by particle...@gmail.com, Apr 4, 2010
+I too get the WebGL Support Required error for the latest chrome dev version. This error pops up for any webgl content I try to view. Did they remove webgl support from the chrome browser?
+
+Comment by eemadza...@gmail.com, Apr 4, 2010
+got latest version of Chrome from here: http://build.chromium.org/buildbot/continuous/linux/LATEST/ but still get "WebGL Support Required" error :(
+
+Comment by tolsoft....@gmail.com, Apr 5, 2010
+Really great job guys thank you for this project.
+
+Comment by wielkie...@gmail.com, Apr 5, 2010
+It works only with closed source drivers, because of pbuffer usage. No, Intel GMAs don't work either. Just only ATI cards with fglrx/catalyst and NVidia with proprietary drivers. I'm not certain about the state of OpenGL Intel drivers on Windows, but they're probably Mesa too.
+
+Also, you still need --no-sandbox. Easy examples (like SpiritBox?) work without it, but GwtQuake? not (it doesn't load most of the images and messes up z-buffer). This was the case for fglrx on ubuntu 9.10.
+
+It's a bit slow (<20fps), but hopefully it will improve in the future.
+
+Comment by matthew....@alum.bu.edu, Apr 6, 2010
+The Firefox nightly builds support an experimental WebGL canvas context using the name "experimental-webgl", so you probably need to replace all instances of "moz-webgl" in the code. In particular, I found "moz-webgl" in the following file:
+
+http://code.google.com/p/quake2-gwt-port/source/browse/src/com/google/gwt/corp/webgl/client/WebGL.java
+
+Comment by dha...@gmail.com, Apr 6, 2010
+I got the dreaded "webgl" screen with no javascript errors--- I then updated my video card driver (was using the default driver that came with Windows) to the driver provided by ATI. This included opengl support, which I was then able to move past this screen and play
+
+"WebGL Support Required
+
+For a list of compatible browsers and installation instructions, please refer to
+
+http://code.google.com/p/quake2-gwt-port/wiki/CompatibleBrowsers
+For a detailed error log, please refer to the JS console."
+
+Comment by tuvu...@gmail.com, Apr 6, 2010
+Where's Opera support?
+
+Comment by matthew....@alum.bu.edu, Apr 6, 2010
+There is no public build of Opera that currently supports WebGL.
+
+Comment by michaelj...@gmail.com, Apr 6, 2010
+./chrome --enable-webgl http://localhost:8080/GwtQuake.html
+
+10.04 Ubuntu Lucid, Intel Graphics (gateway laptop) WebGl? Support Error
+
+Comment by wielkie...@gmail.com, Apr 7, 2010
+As I said before, don't even try this with Intel GPUs. WebKit? currently requires pbuffer support which doesn't work with mesa now.
+
+Comment by abloz...@gmail.com, Apr 8, 2010
+等支持firefox了要在linux下玩玩该游戏。
+
+Comment by shawn.tu...@gmail.com, Apr 8, 2010
+As stated by matthew the Firefox webgl context is "experimental-webgl". For reference: http://khronos.org/webgl/wiki/Implementations/Firefox
+
+Comment by epkfa...@live.com, Apr 10, 2010
+i cant seem to enable webgl under chromium through terminal using the codes under virtualbox ubuntu 9.10
+
+Comment by juan...@skomars.net, Apr 14, 2010
+@asadotzler, -"what parts of the code does Firefox not support. Firefox has been a leader in HTML5 "pre-release" features, often beating Chrome to the punch on key HTML5 features."
+
+-u never heard of Safari I guess.
+
+Comment by Gaby.g...@gmail.com, Apr 18, 2010
+OPERA NO!
+
+Comment by markdoum...@gmail.com, Apr 22, 2010
+Why "defaults write com.apple.Safari" when the bundle identifier of the WebKit?.app you've linked to is org.webkit.nightly.WebKit??
+
+Comment by robbies, May 3, 2010
+Two issues with chromium (at least on Windows)
+
+--in-process-webgl
+
+After CL 44729 (http://src.chromium.org/viewvc/chrome?view=rev&revision=44729), this web app apparently requires the usage of the command line option of --in-process-webgl. This affects builds after April 15, 2010. I'm not enough of a Chromium/WebGL/Quake2-gwt expert to understand why that change borked everything up, but...it did.
+
+glGetString(GL_VERSION)
+
+After CL 45293 (http://src.chromium.org/viewvc/chrome?view=rev&revision=45293), Chromium returns a new string for GL_VERSION (OpenGL ES 2.0 Chromium). This is correct as WebGL is based off of OpenGL ES 2.0. Previously, Chromium was just returning the version string returned by the underlying OpenGL driver, which is not correct. The Quake2 app is expecting a pure version number, and tries to parse it as a float, and this throws a NumberFormatException?? when it tries to convert "Ope" :)
+
+This project has to be converted to correctly parse the new GL_VERSION string.
+
+Reposting comment due to my incorrect usage of wiki markup :)
+
+Comment by ayq...@gmail.com, May 7, 2010
+Using the latest build of chromium on Linux, the instructions do not work.
+
+I am running Ubuntu Lucid Lynx (10.04). I'm running sun-jdk, not openjdk, and am running the AMD64 version.
+
+I downloaded the x64 latest build of chromium, and tried: ./chrome --enable-webgl --no-sandbox (the executable's name has changed)
+
+Then I loaded up the GwtQuake?.html page on the running server, and got:
+
+WebGL Support Required For a list of compatible browsers and installation instructions, please refer to http://code.google.com/p/quake2-gwt-port/wiki/CompatibleBrowsers For a detailed error log, please refer to the JS console.
+
+Checking the console gave me this message:
+
+Failed to load resource gwtquake/3F5EB2DF5D73681377881A2A6FBDBB9C.cache.html
+
+Please help me make this work.
+
+Thanks
+
+Comment by darkstri...@gmail.com, May 10, 2010
+Using the latest build of chromium on Linux, the instructions do not work.
+
+Running Ubuntu 10.04, sun-jdk6
+
+Result: WebGL Support Required For a list of compatible browsers and installation instructions, please refer to http://code.google.com/p/quake2-gwt-port/wiki/CompatibleBrowsers For a detailed error log, please refer to the JS console.
+
+In console nothing seems wrong:
+
+Quake2 Initialized
+nextmap: demo2
+
+Comment by robbies, May 11, 2010
+Hey ayqazi and darkstrikerd, try using the --in-process-webgl parameter I mentioned in my comment immediately prior to yours.
+
+Comment by jacob.be...@gmail.com, May 14, 2010
+Hi, I am working on WebGL @ Mozilla and wanted to check if Quake2 works better now, but I can't as all I get is the "WebGL support required" page. Please allow me to test :)
+
+Comment by capa...@gmail.com, May 16, 2010
+Hi, i have a mac, i've followed the instructions
+
+Download Chromium: http://build.chromium.org/buildbot/continuous/mac/LATEST/
+Run ./Chromium.app/Contents/MacOS/Chromium --enable-webgl
+And i see this:
+
+[732:779:20227430933334:ERROR:/b/slave/chromium-rel-mac/build/src/chrome/common/chrome_paths.cc(245)] Not implemented reached in bool chrome::PathProvider?(int, FilePath?)
+
+any ideas?
+
+@darkstrikerd: i've the same problem, you need to eneble webgl, maybe?
+
+Comment by Alan.Sap...@gmail.com, May 19, 2010
+You can try it at http://playwebgl.com/games/quake-2-webgl/ The game is hosted there
+
+Comment by gertjan....@gmail.com, May 21, 2010
+both on my windows (win2008R2, NVidia QuatroFX 580), and macbook pro (snowleopard, Nvidia Geforce 8600M GT) it fails while loading checking opengl extensions, with a java.lang.NumberFormatException?: For input string: "Ope"
+
+Comment by Gerco.Ba...@gmail.com, May 21, 2010
+I managed to avoid the "!java.lang.NumberFormatException?" by using the --in-process-webgl option to chrome. It appears to change the OpenGL GL_VERSION parameter from "OpenGL ES 2.0 Chromium" to "2.1.2 NVIDIA 173.14.09". It also allowed me to run on all my machines:
+
+ATI/Debian
+ATI/XP
+NVidia/Debian
+VirtualBox?/XP ;-) (.1 to 5 fps!)
+Comment by pom...@gmail.com, May 26, 2010
+I have troubles to lunch it... Log: 467C963030334F33D5FBE8BFBB59B43F.cache.html:6029Test for System.out.println() 467C963030334F33D5FBE8BFBB59B43F.cache.html:6029Did the exception test appear above? 467C963030334F33D5FBE8BFBB59B43F.cache.html:7097... EAX2.0 not found 467C963030334F33D5FBE8BFBB59B43F.cache.html:7097... using 32 channels 467C963030334F33D5FBE8BFBB59B43F.cache.html:7097sound sampling rate: 44100Hz 467C963030334F33D5FBE8BFBB59B43F.cache.html:7097------------------------------------ 467C963030334F33D5FBE8BFBB59B43F.cache.html:7097couldn't exec config.cfg 467C963030334F33D5FBE8BFBB59B43F.cache.html:7097couldn't exec config.cfg 467C963030334F33D5FBE8BFBB59B43F.cache.html:7097Console initialized. 467C963030334F33D5FBE8BFBB59B43F.cache.html:7097 467C963030334F33D5FBE8BFBB59B43F.cache.html:7097------- sound initialization ------- 467C963030334F33D5FBE8BFBB59B43F.cache.html:7097 467C963030334F33D5FBE8BFBB59B43F.cache.html:7097------- use sound driver "HTML5Audio" ------- 467C963030334F33D5FBE8BFBB59B43F.cache.html:7097------- Loading VID ------- 467C963030334F33D5FBE8BFBB59B43F.cache.html:7097ref_gl version: GL 0.01 467C963030334F33D5FBE8BFBB59B43F.cache.html:59860: GLimp_SetMode? 467C963030334F33D5FBE8BFBB59B43F.cache.html:59861: determining old display mode 467C963030334F33D5FBE8BFBB59B43F.cache.html:59862: searching new display mode 467C963030334F33D5FBE8BFBB59B43F.cache.html:59863: copying w/h 467C963030334F33D5FBE8BFBB59B43F.cache.html:59864: setting mode: jake2.render.DisplayMode?@1 467C963030334F33D5FBE8BFBB59B43F.cache.html:59865: storing mode 467C963030334F33D5FBE8BFBB59B43F.cache.html:59866: newWindow notification 467C963030334F33D5FBE8BFBB59B43F.cache.html:7097GL_VENDOR: NVIDIA Corporation 467C963030334F33D5FBE8BFBB59B43F.cache.html:7097GL_RENDERER: GeForce? 9500 GT/PCI/SSE2 467C963030334F33D5FBE8BFBB59B43F.cache.html:7097GL_VERSION: OpenGL ES 2.0 Chromium 467C963030334F33D5FBE8BFBB59B43F.cache.html:7097GL_EXTENSIONS: 467C963030334F33D5FBE8BFBB59B43F.cache.html:6029java.lang.NumberFormatException?: For input string: "Ope" 467C963030334F33D5FBE8BFBB59B43F.cache.html:6029 at Unknown.lme(Unknown source:0) 467C963030334F33D5FBE8BFBB59B43F.cache.html:6029 at Unknown.Gke(Unknown source:0) 467C963030334F33D5FBE8BFBB59B43F.cache.html:6029 at Unknown.$Kd(Unknown source:0) 467C963030334F33D5FBE8BFBB59B43F.cache.html:6029 at Unknown.yOd(Unknown source:0) 467C963030334F33D5FBE8BFBB59B43F.cache.html:6029 at Unknown.vFb(Unknown source:0) 467C963030334F33D5FBE8BFBB59B43F.cache.html:6029 at Unknown.Ecb(Unknown source:0) 467C963030334F33D5FBE8BFBB59B43F.cache.html:6029 at Unknown.C_d(Unknown source:0) 467C963030334F33D5FBE8BFBB59B43F.cache.htmlFailed to load resource
+
+System : 6.0.416.0 (48240) Ubuntu 9.10 Karmic
+
+Comment by rainsw...@gmail.com, May 27, 2010
+At the beginning, I will have above problems like "WebGL Support Required" or "Failed to read resource"
+
+After using the following version, it can work normally. If you are a win user, please try this version. http://build.chromium.org/buildbot/continuous/win/2010-05-16/47395/ Have a try and enjoy...
+
+Comment by Suchansk...@gmail.com, Jun 11, 2010
+poor firefox users :D chrome has raped you once more
+
+Comment by atomic1f...@gmail.com, Jun 17, 2010
+I managed to run game of GWT Quake 2, Problem is, I ran a hosted version, but certain parts seem to be missing, I can see the enemy, hear sounds, and see my gun and target, but cant see the menu, and the background, with bits and pieces dragging all over the place in graphical glitches.
+
+Comment by robin.va...@gmail.com, Jun 19, 2010
+I also get "WebGL Support Required" under OSX, I tried an older version of Chromium, enabled Webgl and tried: ./Chromium.app/Contents/MacOS/Chromium –enable-webgl --in-process-webgl
+
+but that returned: "usage of unsupported command line --in-process-webgl" or something.
+
+Comment by jacob.be...@gmail.com, Jun 22, 2010
+Anyone interested in helping fixing quake2-gwt to work in firefox, see current effort here: https://bugzilla.mozilla.org/show_bug.cgi?id=557423 and my comment here: http://code.google.com/p/quake2-gwt-port/issues/detail?id=26#c4
+
+Comment by jacob.be...@gmail.com, Jun 22, 2010
+Update: applying Barak's patch (https://bugzilla.mozilla.org/show_bug.cgi?id=557423) to quake2-gwt-port, it now actually running in minefield, without needing to patch minefield at all!
+
+Make sure you have a release (not debug) build of minefield if you are interested in performance ;-)
+
+Comment by jacob.be...@gmail.com, Jun 22, 2010
+Update: I just tried with a release build of Minefield, and it's totally playable!! (Well, I have a pretty decent CPU and GPU, but anyway).
+
+Comment by jacob.be...@gmail.com, Jun 23, 2010
+Firefox HOWTO here: http://code.google.com/p/quake2-gwt-port/issues/detail?id=26
+
+Comment by jacob.be...@gmail.com, Jun 23, 2010
+oops, wrong link.
+
+Firefox HOWTO here: https://bugzilla.mozilla.org/show_bug.cgi?id=557423#c44
+
+Comment by jacob.be...@gmail.com, Jul 8, 2010
+Forget about the Firefox HOWTO, thanks to the great work of Barak and Stefan, this is not needed anymore.
+
+Comment by usan...@gmail.com, Jul 27, 2010
+Runs good on Minefield. If anyone is interested here is a link to (JV)NES Emulator. http://benfirshman.com/projects/jsnes/
+
+Comment by WelfordM...@gmail.com, Aug 11, 2010
+Running Firefox (Minefield) 4.04b with OSMESA32.dll
+
+And it still dose not work can you build this to allow it as i have tested WebGL with OSMESA32 and it works but not on your application.
+
+Comment by smoo...@gmail.com, Aug 16, 2010
+WelfordMartin?, I'm not sure from which revision the 4.04b build your using was built from (though I imagine it's a very recent build) but there's a very good chance it has the problem I posted about in  Issue 30  (see http://code.google.com/p/quake2-gwt-port/issues/detail?id=30#c0 - were there errors in the Firefox Error console?). If it is then the patch I provided there should fix the problem, if not please post more details :)
+
+Comment by zylor...@gmail.com, Sep 11, 2010
+Using Firefox 4.0b5, says it is not compatible. Clicked on link for nightly builds, the version in that web folder is 4.0b6, not the 4.02b that this page says we need. What's going on?
+
+Comment by zylor...@gmail.com, Sep 11, 2010
+Also downloaded Chromium 7.0.522.0 (59190). Ran it with the commands chrome.exe --enable-webgl chrome.exe --enable-webgl --no-sandbox chrome.exe --enable-webgl --no-sandbox --in-process-webgl chrome.exe --enable-webgl --in-process-webgl but none of the instances worked with Q2. However, they did work with various other webgl demos out there...
+
+Comment by zylor...@gmail.com, Sep 11, 2010
+Oh, and when I say "didn't work" I mean it displayed the "WebGL Support Required
+
+For a list of compatible browsers and installation instructions, please refer to
+
+http://code.google.com/p/quake2-gwt-port/wiki/CompatibleBrowsers For a detailed error log, please refer to the JS console." screen. Error in JS Console was: Failed to load resource gwtquake/145205A6B37E69830A60D5EB91291985.cache.html
+
+Comment by jacob.be...@gmail.com, Sep 16, 2010
+zylorian, did you enable WebGL in firefox? Go to about:config and set webgl.enabled_for_all_sites
+
+Comment by ismail.d...@gmail.com, Oct 1, 2010
+Doesn't work in Chrome Dev Channel, WebGL samples do work fine.
+
+Comment by nbarr...@gmail.com, Oct 1, 2010
+Hi, I'm trying this with latest Chromium build on mac. Other WebGl? stuff works, but I get the "WebGL Support Required" error. The JS console shows:
+
+com.google.gwt.core.client.JavaScriptException?: gwtquake/B924BEE1D47DEDEB0CDF9C5090FD34A7.cache.html:6174
+
+(TypeError?): Object WebGLRenderingContext? has no method 'getString'
+
+Comment by pepijndevos, Oct 6, 2010
+Same as nbarriga, both in Webkit and Chromium.
+
+Comment by shadhe...@yahoo.com, Oct 15, 2010
+No iPhone support? :(
+
+Comment by zylor...@gmail.com, Oct 23, 2010
+@jacob.benoit.1 I did turn on WebGL. Other samples work fine, but this does not.
+
+Comment by project member matthias.buchner, Nov 6, 2010
+I am trying WebKit? on Windows. I don't understand the instruction: "Type this into a terminal: defaults write com.apple.Safari WebKitWebGLEnabled -bool YES"
+
+Is it terminal as windows command prompt or terminal within the browser?
+
+Comment by Xath...@gmail.com, Nov 16, 2010
+@matthias.buchner I sincerely hope the above was a joke full of sarcasm. Right?
+
+Comment by project member matthias.buchner, Nov 17, 2010
+@Xathien Sure it was
+
+Comment by edis...@google.com, Dec 3, 2010
+mouse2 (right click) does not work!!!
+
+Comment by tommy.e....@gmail.com, Dec 6, 2010
+running chrome 8 on ubuntu 10.10. webgl is enabled, and i can run other webgl demos. however, this game gives me the error that i need a webgl enabled browser...browser detection bug perhaps?
+
+Comment by the.fs....@gmail.com, Dec 10, 2010
+WebGL, WebGL... = And WHERE is WebGL for my beloved GeForce? MX440 ?!! = Neither Chrome 9.0dev with --enable-webgl, nor FF4 beta 7, - I just see messages like "Sorry, WebGL not supported". Sad.
+
+Comment by serp...@gmail.com, Feb 8, 2011
+I was able to run this. Although no sound and app crashes quite frequently:)
+
+Comment by latinus...@hotmail.com, Aug 2, 2011
+No Internet Explorer? The king of HTML5 graphics?
+
+Comment by tomek.ce...@gmail.com, Jan 7, 2012
+where is Opera support? :-)
+
+Comment by martin....@googlemail.com, Jan 28, 2012
+Couple of notices:
+
+1. URL for chromium is not valid:
+
+2. firefox ... WebGL: Open the URL about:config and set the property webgl.enabled_for_all_sites to true ... DOES NOT EXIST in the last nightly build.
+
+webgl.disable-extensions;false webgl.disabled;false
+
+3. to rid of blank/black screen I had to chmod 777 -R /quake dir.
+
+4. When I run it in firefox I have got error: glGetError() = 0x502 glGetString not implemented Failed to load file #0: maps/demo1.bsp
+
+Comment by HWGUY.SiPlus@gmail.com, Sep 25, 2012
+Latinusrex, even though IE is awesome at 2D canvas, it has no WebGL support at all.
+
+Comment by andywatt...@gmail.com, Dec 26, 2013
+So this project died?
+_________________________________
+FAQ  
+FAQ 
+Featured Updated Jul 6, 2010 by stefan.haustein
+Where's the public demo link?
+We are as yet unable to provide a public demo link. The Quake II code is GPL licensed, but the demo resources (textures, models, sounds, et al) are not, so we cannot simply upload them to a server. We are pursuing legitimate avenues to do so, though -- stay tuned.
+
+This mouse-look implementation is terrible!
+Yes, it is. We've tried a number of different schemes for replicating mouse-look, but they all suffer from the same problem -- there's no way to recenter the mouse in the browser, so you eventually drag off the edge. This is something we will bring up on the standards lists (yes, there are security and user happiness implications, but we believe a middle-ground can be found).
+
+In the meantime, you can at least recenter the mouse manually by right-dragging the cursor back to the center of the screen. Not perfect, but makes it playable.
+
+Why is the Chromium version significantly slower than WebKit?
+This is related to the cost of copying frame buffers and Chromium's multi- process architecture (see this document for details). This issues will be fixed soon.
+
+Why is the Firefox version significantly slower than WebKit?
+We think this is JavaScript performance issue. This bug has some information: https://bugzilla.mozilla.org/show_bug.cgi?id=557423
+
+Why does WebKit crash sometimes?
+The WebGL implementation in WebKit is still quite new, as is its implementation of WebSockets, among other things. We've seen different behaviors on different nightly releases, so you can always try a new one or roll back to see if that fixes things. Chromium seems to be more stable, but a bit slower at present.
+
+Why is it so dark?
+The original Quake II code performed gamma correction as it loaded textures on the client. We were unable to efficiently preserve this when we switched to WebGL, so textures are loaded with no correction. On some platforms this can lead to too dark or too light scenes. This problem could be solved by either performing gamma correction on the server, or moving it into the fragment shader.
+
+Why's the code so ugly?
+The original Quake II code was straight C, written in the mid-90's. The Jake2 port to Java was very direct, which preserved most of it's C-isms, including giant bags of static methods where C functions used to be. In addition to this, we hacked and slashed our way through the code to get it going and reasonably optimized, but there was definitely some collateral damage along the way.
+
+What browser features does this rely on?
+Just about every HTML5 buzzword you've heard for the past year or so:
+
+Canvas/WebGL: For obvious reasons
+<audio>: For sound
+<video>: For in-game videos
+Web Sockets: For client-server communication
+Local Storage: For saving prefs. and saved games
+Comment by sigrist....@gmail.com, Apr 2, 2010
+Can I change the interface and port the server is listening on?
+
+Comment by nml...@gmail.com, Apr 2, 2010
+What hardware was used to get that video demo to run so smoothly?
+
+Comment by VanFaceb...@googlemail.com, Apr 2, 2010
+Is it rendered client- or server-side?
+
+Comment by jaka.jan...@gmail.com, Apr 3, 2010
+Client side.
+
+Comment by bazzaw...@gmail.com, Apr 3, 2010
+how can I use my own copy of the quake 2 demo as id servers are so slow?
+
+Comment by jsavelj...@gmail.com, Apr 12, 2010
+The Quake II code is GPL licensed, but the demo resources (textures, models, sounds, et al) are not, so we cannot simply upload them to a server. Actually Jake2 allows to download q2 demo data from ftp.idsoftware.com. This pretty much makes it a legit action.
+
+Comment by ach...@gmail.com, Apr 17, 2010
+Actually Jake2 allows to download q2 demo data from ftp.idsoftware.com.
+
+It is perfectly legal for the owner to distribute the demo resources. It is not, however, legal for a third party to host the same file(s) in any manner without an agreement from the owner. They are probably in talks with Id to get approval to do this (which is why they stated We are pursuing legitimate avenues to do so, though -- stay tuned.).
+
+Comment by gabklein, Apr 25, 2010
+All this buzz and we can't check it out? Great.
+
+Comment by markdoch...@me.com, Apr 29, 2010
+Fantastic work, I just rebuilt the project on my MacBook? and the speed is great. I'm a Flash Developer so I'm torn between admiration and trepidation that I may have to switch careers!
+
+Comment by egeoff...@mac.com, Apr 30, 2010
+Wow! Neato.
+
+Any way to add the expansion packs into the mix? I have the files.
+
+Comment by rolf.der...@gmail.com, May 2, 2010
+What are the required computer specs?
+
+Comment by vivacar...@gmail.com, Jul 14, 2010
+have you considered the nexuiz art for the free demo, i believe its all under creative commons
+
+Comment by Viewtifu...@gmail.com, Sep 5, 2011
+Would it be possible to build this and use the full version of Quake II's resource files, provided you can supply the CD?
+
+Comment by orvarkor...@gmail.com, Jan 3, 2012
+Would it be possible for the user to point out a directory which contains the necessary .PAK files? I bet many people have the game, and just needs to point out the CD.
+
+Of course, this is possible by downloading and building the code, but that is a pain sometimes. I would like a link that I can click, and all the executables are downloaded, and then it asks for the directory which contains the PAK files. Could you do this solution?
